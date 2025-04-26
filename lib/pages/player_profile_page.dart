@@ -36,17 +36,22 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          // Collapsible App Bar with Image and Metadata
+          // Collapsible App Bar with White Text and Back Button
           SliverAppBar(
             expandedHeight: 400,
             pinned: true,
-            title: Text(widget.player['name'] ?? 'Player Profile'),
+            backgroundColor: theme.primaryColor,
+            title: Text(
+              widget.player['name'] ?? 'Player Profile',
+              style: const TextStyle(color: Colors.white),
+            ),
             leading: IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () => Navigator.pop(context),
             ),
             flexibleSpace: FlexibleSpaceBar(
               background: _buildFlexibleSpaceBackground(),
+              titlePadding: EdgeInsets.zero,
             ),
           ),
           // Sticky Tabs
@@ -74,7 +79,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     );
   }
 
-  // Flexible Space Background with Image and Metadata
+  // ### Flexible Space Background
   Widget _buildFlexibleSpaceBackground() {
     return Stack(
       fit: StackFit.expand,
@@ -101,14 +106,6 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                widget.player['name'] ?? 'Player Name',
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 8,
@@ -130,7 +127,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     );
   }
 
-  // Info Pill Widget
+  // ### Info Pill Widget
   Widget _buildInfoPill(String label, String value) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -145,7 +142,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     );
   }
 
-  // Stats Section
+  // ### Stats Section
   Widget _buildStatsSection(Map<String, String> stats) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -159,7 +156,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     );
   }
 
-  // Stat Card Widget
+  // ### Stat Card Widget
   Widget _buildStatCard(String title, String value) {
     return Container(
       width: 160,
@@ -198,7 +195,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     );
   }
 
-  // Data Processing Functions
+  // ### Data Processing Functions
   Map<String, String> _processRecentStats(Map<String, dynamic> scores) {
     final runs = _parseNumberList(scores['runs']);
     final wickets = _parseNumberList(scores['wickets']);
@@ -252,7 +249,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     };
   }
 
-  // Helper Functions
+  // ### Helper Functions
   List<num> _parseNumberList(dynamic data) {
     if (data is! List) return [];
     return data.whereType<String>().map((e) {
@@ -325,7 +322,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
   }
 }
 
-// Sticky Tab Delegate
+// ### Sticky Tab Delegate
 class _StickyTabDelegate extends SliverPersistentHeaderDelegate {
   final List<String> tabs;
   final ThemeData theme;
