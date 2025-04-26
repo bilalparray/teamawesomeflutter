@@ -1,6 +1,5 @@
 // player_list_card.dart
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
 class PlayerListCard extends StatelessWidget {
@@ -14,81 +13,98 @@ class PlayerListCard extends StatelessWidget {
     required this.role,
     required this.imagePath,
     required this.onTap,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final accent = Theme.of(context).primaryColor;
+
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-      elevation: 1,
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+      elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              // Profile Picture
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: _getImageProvider(imagePath),
-                    fit: BoxFit.cover,
-                  ),
+        borderRadius: BorderRadius.circular(12),
+        child: Row(
+          children: [
+            // Accent side bar
+            Container(
+              width: 4,
+              height: 72,
+              decoration: BoxDecoration(
+                color: accent,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  bottomLeft: Radius.circular(12),
                 ),
               ),
-              const SizedBox(width: 16),
-              // Name and Role
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+            Expanded(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Row(
                   children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    // Profile Picture
+                    CircleAvatar(
+                      radius: 28,
+                      backgroundImage: _getImageProvider(imagePath),
+                      backgroundColor: Colors.grey.shade200,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      role,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
+                    const SizedBox(width: 16),
+                    // Name and Role
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            role,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    ),
+                    // Navigation Icon
+                    Icon(
+                      Icons.chevron_right,
+                      color: accent,
+                      size: 28,
                     ),
                   ],
                 ),
               ),
-              // Navigation Icon
-              Icon(
-                Icons.chevron_right,
-                color: Colors.grey[400],
-                size: 24,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  ImageProvider _getImageProvider(String imagePath) {
-    // Assuming it's a base64 string (no 'data:image' part)
+  ImageProvider _getImageProvider(String path) {
     try {
-      return MemoryImage(base64Decode(imagePath));
-    } catch (e) {
+      final bytes = base64Decode(path);
+      return MemoryImage(bytes);
+    } catch (_) {
       return const AssetImage('assets/players/profile.png');
     }
   }
