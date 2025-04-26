@@ -115,7 +115,7 @@ class _SettingsPageState extends State<SettingsPage> {
             subtitle: 'Tell others about the app',
             onTap: () {
               Share.share(
-                'Check out Team Awesome Sozeith! Download now: https://play.google.com/store/apps/details?id=com.teamawesome.sozeith',
+                'Check out Team Awesome Sozeith! Download now: https://play.google.com/store/apps/details?id=com.qayham.teamawesomesozeith',
               );
             },
           ),
@@ -125,7 +125,7 @@ class _SettingsPageState extends State<SettingsPage> {
             title: 'Check for Updates',
             onTap: () {
               _launchUrl(
-                  'https://play.google.com/store/apps/details?id=com.teamawesome.sozeith');
+                  'https://play.google.com/store/apps/details?id=com.qayham.teamawesomesozeith');
             },
           ),
 
@@ -146,7 +146,8 @@ class _SettingsPageState extends State<SettingsPage> {
             icon: Icons.privacy_tip,
             title: 'Privacy Policy',
             onTap: () {
-              _launchUrl('https://qayham.com');
+              _launchUrl(
+                  'https://qayham.com/products/teamawesomesozeith/privacy.html');
             },
           ),
 
@@ -176,9 +177,9 @@ class _SettingsPageState extends State<SettingsPage> {
             context,
             icon: Icons.mail_outline,
             title: 'Contact Support',
-            subtitle: 'support@teamawesome.sozeith',
+            subtitle: 'Hello, i need help in Team Awesome Sozeith app',
             onTap: () {
-              _launchUrl('mailto:support@teamawesome.sozeith');
+              _launchUrl('mailto:parraybilal34@gmail.com');
             },
           ),
 

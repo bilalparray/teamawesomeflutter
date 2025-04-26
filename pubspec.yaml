@@ -1,7 +1,7 @@
 name: teamawesomesozeith
 description: "A simple and efficient app built with Flutter to keep track of your local cricket team's player statistics. Easily record and view player performance, including runs, wickets, and other key stats, all in one place."
 
-version: 1.0.0+1
+version: 0.0.1+1
 
 environment:
   sdk: ^3.6.2
