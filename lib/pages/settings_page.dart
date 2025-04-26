@@ -2,25 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _SettingsPageState createState() => _SettingsPageState();
 }
 
 class _SettingsPageState extends State<SettingsPage> {
   String _version = '';
   String _buildNumber = '';
-  bool _isDarkMode = false;
 
   @override
   void initState() {
     super.initState();
     _loadPackageInfo();
-    _loadDarkModePreference();
   }
 
   Future<void> _loadPackageInfo() async {
@@ -29,22 +27,6 @@ class _SettingsPageState extends State<SettingsPage> {
       _version = info.version;
       _buildNumber = info.buildNumber;
     });
-  }
-
-  Future<void> _loadDarkModePreference() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _isDarkMode = prefs.getBool('isDarkMode') ?? false;
-    });
-  }
-
-  Future<void> _setDarkMode(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isDarkMode', value);
-    setState(() {
-      _isDarkMode = value;
-    });
-    // Note: Update app theme in MaterialApp using a provider or similar
   }
 
   Future<void> _launchUrl(String url) async {

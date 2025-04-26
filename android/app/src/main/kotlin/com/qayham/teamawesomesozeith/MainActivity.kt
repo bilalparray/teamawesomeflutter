@@ -1,4 +1,4 @@
-package com.example.teamawesomeflutter
+package com.qayham.teamawesomesozeith
 
 import io.flutter.embedding.android.FlutterActivity
 
