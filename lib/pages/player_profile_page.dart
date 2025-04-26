@@ -1,11 +1,24 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+const Map<String, IconData> statIcons = {
+  'Last Runs': Icons.sports_cricket,
+  'Last Wkts': Icons.sports_baseball,
+  'Strike%': Icons.speed,
+  'Avg 4': Icons.trending_up,
+  'High 4': Icons.arrow_upward,
+  'Total Runs': Icons.sports_cricket,
+  'Total Wkts': Icons.sports_baseball,
+  'Matches': Icons.event,
+  'Avg': Icons.trending_up,
+  'Career Runs': Icons.sports_cricket,
+  'Career Wkts': Icons.sports_baseball,
+};
 
 class PlayerProfilePage extends StatefulWidget {
   final Map<String, dynamic> player;
-
-  const PlayerProfilePage({super.key, required this.player});
+  const PlayerProfilePage({Key? key, required this.player}) : super(key: key);
 
   @override
   _PlayerProfilePageState createState() => _PlayerProfilePageState();
@@ -13,12 +26,18 @@ class PlayerProfilePage extends StatefulWidget {
 
 class _PlayerProfilePageState extends State<PlayerProfilePage>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+  late final TabController _tabController;
+  double _opacity = 0.0;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        _opacity = 1.0;
+      });
+    });
   }
 
   @override
@@ -29,330 +48,270 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
 
   @override
   Widget build(BuildContext context) {
-    final scores = widget.player['scores'] ?? {};
-    final careerStats = scores['career'] ?? {};
     final theme = Theme.of(context);
+    final primary = theme.primaryColor;
+    final player = widget.player;
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          // Collapsible App Bar with White Text and Back Button
-          SliverAppBar(
-            expandedHeight: 400,
-            pinned: true,
-            backgroundColor: theme.primaryColor,
-            title: Text(
-              widget.player['name'] ?? 'Player Profile',
-              style: const TextStyle(color: Colors.white),
-            ),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
-            ),
-            flexibleSpace: FlexibleSpaceBar(
-              background: _buildFlexibleSpaceBackground(),
-              titlePadding: EdgeInsets.zero,
-            ),
-          ),
-          // Sticky Tabs
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _StickyTabDelegate(
-              tabs: ['Recent Form', 'Year Stats', 'Career'],
-              theme: theme,
-              controller: _tabController,
-            ),
-          ),
-          // Tab Content
-          SliverFillRemaining(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildStatsSection(_processRecentStats(scores)),
-                _buildStatsSection(_processYearStats(scores)),
-                _buildStatsSection(_processCareerStats(careerStats)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ### Flexible Space Background
-  Widget _buildFlexibleSpaceBackground() {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Image(
-          image: _getImageProvider(widget.player),
-          fit: BoxFit.cover,
-        ),
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.transparent,
-                Colors.black.withOpacity(0.8),
-              ],
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _buildInfoPill('Born', _parseDate(widget.player['born'])),
-                  _buildInfoPill('Debut', _parseDate(widget.player['debut'])),
-                  _buildInfoPill(
-                      'Batting', widget.player['battingstyle'] ?? 'N/A'),
-                  _buildInfoPill(
-                      'Bowling', widget.player['bowlingstyle'] ?? 'N/A'),
-                  _buildInfoPill('Role', widget.player['role'] ?? 'N/A'),
-                ],
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          return [
+            SliverAppBar(
+              expandedHeight: 280,
+              pinned: true,
+              floating: true,
+              backgroundColor: primary,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
               ),
+              title: Text(
+                player['name'] ?? 'Player Profile',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              centerTitle: false,
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(48),
+                child: Container(
+                  color: primary,
+                  child: TabBar(
+                    controller: _tabController,
+                    indicatorColor: Colors.white,
+                    labelColor: Colors.white,
+                    unselectedLabelColor: Colors.white70,
+                    labelStyle: theme.textTheme.titleMedium,
+                    tabs: const [
+                      Tab(text: 'Profile'),
+                      Tab(text: 'Recent'),
+                      Tab(text: 'Year'),
+                      Tab(text: 'Career'),
+                    ],
+                  ),
+                ),
+              ),
+              flexibleSpace: FlexibleSpaceBar(
+                background: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image(
+                      image: _getImageProvider(player),
+                      fit: BoxFit.cover,
+                      alignment: Alignment.topCenter,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.black.withOpacity(0.7),
+                            Colors.transparent,
+                          ],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ];
+        },
+        body: AnimatedOpacity(
+          opacity: _opacity,
+          duration: const Duration(milliseconds: 500),
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildProfileSection(player),
+              _statsGrid(_processRecentScores(player['scores'] ?? {})),
+              _statsGrid(_processYearScores(player['scores'] ?? {})),
+              _statsGrid(
+                  _processCareerScores(player['scores']?['career'] ?? {})),
             ],
           ),
         ),
-      ],
-    );
-  }
-
-  // ### Info Pill Widget
-  Widget _buildInfoPill(String label, String value) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        '$label: $value',
-        style: const TextStyle(color: Colors.white, fontSize: 14),
       ),
     );
   }
 
-  // ### Stats Section
-  Widget _buildStatsSection(Map<String, String> stats) {
-    return SingleChildScrollView(
+  Widget _buildProfileSection(Map<String, dynamic> player) {
+    return Padding(
       padding: const EdgeInsets.all(16),
-      child: Wrap(
-        spacing: 12,
-        runSpacing: 12,
-        children: stats.entries
-            .map((entry) => _buildStatCard(entry.key, entry.value))
-            .toList(),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Text(
+                player['name'] ?? 'Unknown Player',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            _buildMetadataItem('Born', _parseDate(player['born']), Icons.cake),
+            _buildMetadataItem(
+                'Debut', _parseDate(player['debut']), Icons.sports_cricket),
+            _buildMetadataItem('Batting Style', player['battingstyle'] ?? 'N/A',
+                Icons.sports_handball),
+            _buildMetadataItem('Bowling Style', player['bowlingstyle'] ?? 'N/A',
+                Icons.sports_baseball),
+            _buildMetadataItem('Role', player['role'] ?? 'N/A', Icons.person),
+          ],
+        ),
       ),
     );
   }
 
-  // ### Stat Card Widget
-  Widget _buildStatCard(String title, String value) {
-    return Container(
-      width: 160,
+  Widget _buildMetadataItem(String label, String value, IconData icon) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      child: ListTile(
+        leading: Icon(icon, color: Theme.of(context).primaryColor, size: 24),
+        title: Text(
+          label,
+          style: TextStyle(color: Colors.grey[600], fontSize: 14),
+        ),
+        trailing: Text(
+          value,
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+        ),
+      ),
+    );
+  }
+
+  Widget _statsGrid(Map<String, String> stats) {
+    return Padding(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[700],
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
+      child: GridView.count(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 1.6,
+        children: stats.entries.map((e) => _statCard(e.key, e.value)).toList(),
       ),
     );
   }
 
-  // ### Data Processing Functions
-  Map<String, String> _processRecentStats(Map<String, dynamic> scores) {
-    final runs = _parseNumberList(scores['runs']);
-    final wickets = _parseNumberList(scores['wickets']);
-    final balls = _parseNumberList(scores['balls']);
-    final lastFour = _parseNumberList(scores['lastfour']);
+  Widget _statCard(String title, String value) {
+    final icon = statIcons[title] ?? Icons.info;
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            Icon(icon, color: Theme.of(context).primaryColor, size: 24),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
+  Map<String, String> _processRecentScores(Map<String, dynamic> scores) {
+    final runs = _toNumList(scores['runs']);
+    final wickets = _toNumList(scores['wickets']);
+    final balls = _toNumList(scores['balls']);
     return {
-      'Last Match Runs': _lastOrNA(runs),
-      'Last Wickets': _lastOrNA(wickets),
-      'Balls Faced': _lastOrNA(balls),
-      'Strike Rate': _calculateStrikeRate(runs, balls),
-      '4-Match Avg': _calculateAverage(lastFour),
-      '4-Match High': _findMax(lastFour),
+      'Last Runs': _lastOrNA(runs),
+      'Last Wkts': _lastOrNA(wickets),
+      'Strike%': _strikeRate(runs, balls),
+      'Avg 4': _average(runs.take(4).toList()),
+      'High 4': _max(runs.take(4).toList()),
     };
   }
 
-  Map<String, String> _processYearStats(Map<String, dynamic> scores) {
-    final runs = _parseNumberList(scores['runs']);
-    final wickets = _parseNumberList(scores['wickets']);
-    final balls = _parseNumberList(scores['balls']);
-    // final innings = _parseNumberList(scores['innings']);
-
+  Map<String, String> _processYearScores(Map<String, dynamic> scores) {
+    final runs = _toNumList(scores['runs']);
+    final wickets = _toNumList(scores['wickets']);
+    final balls = _toNumList(scores['balls']);
     return {
-      'Total Runs': _sumValues(runs),
-      'Total Wickets': _sumValues(wickets),
-      'Matches': _countValidEntries(runs),
-      'Average': _calculateAverage(runs),
-      'Strike Rate': _calculateStrikeRate(runs, balls),
-      'Centuries': _countCenturies(runs),
-      'Half-Centuries': _countFifties(runs),
-      'Highest Score': _findMax(runs),
+      'Total Runs': _sum(runs),
+      'Total Wkts': _sum(wickets),
+      'Matches': runs.length.toString(),
+      'Avg': _average(runs),
+      'Strike%': _strikeRate(runs, balls),
     };
   }
 
-  Map<String, String> _processCareerStats(Map<String, dynamic> career) {
-    final runs = _parseNumberList(career['runs']);
-    final wickets = _parseNumberList(career['wickets']);
-    final balls = _parseNumberList(career['balls']);
-    // final innings = _parseNumberList(career['innings']);
-
+  Map<String, String> _processCareerScores(Map<String, dynamic> career) {
+    final runs = _toNumList(career['runs']);
+    final wickets = _toNumList(career['wickets']);
+    final balls = _toNumList(career['balls']);
     return {
-      'Career Runs': _sumValues(runs),
-      'Career Wickets': _sumValues(wickets),
-      'Total Matches': _countValidEntries(runs),
-      'Batting Avg': _calculateAverage(runs),
-      'Strike Rate': _calculateStrikeRate(runs, balls),
-      '100s': _countCenturies(runs),
-      '50s': _countFifties(runs),
-      'Best Score': _findMax(runs),
-      'Intl Ranking': career['ranking']?.toString() ?? 'N/A',
+      'Career Runs': _sum(runs),
+      'Career Wkts': _sum(wickets),
+      'Matches': runs.length.toString(),
+      'Avg': _average(runs),
+      'Strike%': _strikeRate(runs, balls),
     };
   }
 
-  // ### Helper Functions
-  List<num> _parseNumberList(dynamic data) {
+  List<num> _toNumList(dynamic data) {
     if (data is! List) return [];
-    return data.whereType<String>().map((e) {
-      try {
-        return num.parse(e);
-      } catch (_) {
-        return 0;
-      }
-    }).toList();
+    return data.whereType<String>().map((s) => num.tryParse(s) ?? 0).toList();
   }
 
-  String _sumValues(List<num> values) {
-    if (values.isEmpty) return 'N/A';
-    return values.fold<num>(0, (a, b) => a + b).toString();
+  String _sum(List<num> v) => v.fold<num>(0, (a, b) => a + b).toString();
+  String _average(List<num> v) => v.isEmpty
+      ? 'N/A'
+      : (v.reduce((a, b) => a + b) / v.length).toStringAsFixed(2);
+  String _strikeRate(List<num> runs, List<num> balls) {
+    final totalRuns = runs.fold<double>(0.0, (sum, val) => sum + val);
+    final totalBalls = runs.fold<double>(0.0, (sum, val) => sum + val);
+    if (totalRuns == 0 || totalBalls == 0) return 'N/A';
+    return ((totalRuns / totalBalls) * 100).toStringAsFixed(2);
   }
 
-  String _calculateAverage(List<num> values) {
-    if (values.isEmpty) return 'N/A';
-    final validValues = values.where((v) => v > 0).toList();
-    if (validValues.isEmpty) return 'N/A';
-    return (validValues.reduce((a, b) => a + b) / validValues.length)
-        .toStringAsFixed(2);
-  }
-
-  String _calculateStrikeRate(List<num> runs, List<num> balls) {
-    if (runs.isEmpty || balls.isEmpty) return 'N/A';
-    final totalRuns = runs.fold<num>(0, (a, b) => a + b);
-    final totalBalls = balls.fold<num>(0, (a, b) => a + (b > 0 ? b : 1));
-    return (totalRuns / totalBalls * 100).toStringAsFixed(2);
-  }
-
-  String _countCenturies(List<num> runs) {
-    return runs.where((r) => r >= 100).length.toString();
-  }
-
-  String _countFifties(List<num> runs) {
-    return runs.where((r) => r >= 50 && r < 100).length.toString();
-  }
-
-  String _findMax(List<num> values) {
-    if (values.isEmpty) return 'N/A';
-    return values.reduce((a, b) => a > b ? a : b).toString();
-  }
-
-  String _lastOrNA(List<num> values) =>
-      values.isNotEmpty ? values.last.toString() : 'N/A';
-
-  String _countValidEntries(List<num> values) =>
-      values.where((v) => v > 0).length.toString();
+  String _lastOrNA(List<num> v) => v.isNotEmpty ? v.last.toString() : 'N/A';
+  String _max(List<num> v) =>
+      v.isNotEmpty ? v.reduce((a, b) => a > b ? a : b).toString() : 'N/A';
 
   ImageProvider _getImageProvider(Map<String, dynamic> player) {
     try {
-      final image = player['image']?.toString() ?? '';
-      if (image.isEmpty) throw Error();
-      final base64 = image.split(',').last;
-      return MemoryImage(base64Decode(base64));
+      final img = player['image']?.toString() ?? '';
+      if (img.isEmpty) throw 'no image';
+      return MemoryImage(base64Decode(img));
     } catch (_) {
       return const AssetImage('assets/players/profile.png');
     }
   }
 
   String _parseDate(String? date) {
+    if (date == null) return 'N/A';
     try {
-      return date == null
-          ? 'N/A'
-          : DateFormat('dd MMM yyyy').format(DateTime.parse(date));
+      return DateFormat('dd MMM yyyy').format(DateTime.parse(date));
     } catch (_) {
       return 'N/A';
     }
   }
-}
-
-// ### Sticky Tab Delegate
-class _StickyTabDelegate extends SliverPersistentHeaderDelegate {
-  final List<String> tabs;
-  final ThemeData theme;
-  final TabController controller;
-
-  _StickyTabDelegate(
-      {required this.tabs, required this.theme, required this.controller});
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      color: theme.scaffoldBackgroundColor,
-      child: TabBar(
-        controller: controller,
-        tabs: tabs.map((title) => Tab(text: title)).toList(),
-        labelColor: theme.primaryColor,
-        unselectedLabelColor: Colors.grey,
-        indicatorColor: theme.primaryColor,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-      ),
-    );
-  }
-
-  @override
-  double get maxExtent => 48;
-
-  @override
-  double get minExtent => 48;
-
-  @override
-  bool shouldRebuild(_StickyTabDelegate oldDelegate) => false;
 }
