@@ -307,7 +307,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
       final base64 = image.split(',').last;
       return MemoryImage(base64Decode(base64));
     } catch (_) {
-      return const AssetImage('assets/players/default_profile.png');
+      return const AssetImage('assets/players/profile.png');
     }
   }
 

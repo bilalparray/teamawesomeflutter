@@ -85,17 +85,11 @@ class PlayerListCard extends StatelessWidget {
   }
 
   ImageProvider _getImageProvider(String imagePath) {
-    if (imagePath.startsWith('data:image')) {
-      // Handle base64 image
-      try {
-        final base64String = imagePath.split(',').last;
-        return MemoryImage(base64Decode(base64String));
-      } catch (e) {
-        return const AssetImage('assets/players/profile.png');
-      }
-    } else {
-      // Handle asset path
-      return AssetImage(imagePath);
+    // Assuming it's a base64 string (no 'data:image' part)
+    try {
+      return MemoryImage(base64Decode(imagePath));
+    } catch (e) {
+      return const AssetImage('assets/players/profile.png');
     }
   }
 }
