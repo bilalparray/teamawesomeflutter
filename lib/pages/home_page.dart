@@ -1,11 +1,11 @@
 // home_page.dart
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../services/player_service.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/player_card.dart';
 import 'player_profile_page.dart';
 import 'settings_page.dart';
-import 'dart:convert'; // Add this import
 
 class HomePage extends StatefulWidget {
   @override
@@ -23,11 +23,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _loadData() async {
+    setState(() => isLoading = true);
+
     try {
       await PlayerService.fetchPlayers();
-      setState(() {
-        isLoading = false;
-      });
+      setState(() => isLoading = false);
     } catch (e) {
       setState(() {
         errorMessage = e.toString();
@@ -38,6 +38,21 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Show loader or error before rendering the main Scaffold
+    if (isLoading) {
+      return Scaffold(
+        appBar: CustomAppBar(title: const Text('Team Awesome Sozeith')),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+    if (errorMessage.isNotEmpty) {
+      return Scaffold(
+        appBar: CustomAppBar(title: const Text('Team Awesome Sozeith')),
+        body: Center(child: Text(errorMessage)),
+      );
+    }
+
+    // Once data is loaded, build the full page
     return Scaffold(
       appBar: CustomAppBar(
         title: const Text('Team Awesome Sozeith'),
@@ -51,11 +66,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : errorMessage.isNotEmpty
-              ? Center(child: Text(errorMessage))
-              : _buildPlayerContent(),
+      body: _buildPlayerContent(),
     );
   }
 
@@ -107,26 +118,26 @@ class _HomePageState extends State<HomePage> {
         ),
         SizedBox(
           height: 250,
-          // padding: const EdgeInsets.all(16),
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(vertical: 12),
             scrollDirection: Axis.horizontal,
             itemCount: players.length,
             itemBuilder: (ctx, i) {
-              final player = players[i];
+              final p = players[i];
               return SizedBox(
                 width: 200,
                 child: PlayerCard(
-                  name: player['name'] ?? 'Unknown Player',
-                  role: player['role'] ?? 'Player',
-                  imagePath: player['image'] != null
-                      ? 'data:image/jpeg;base64,${player['image']}'
+                  name: p['name'] ?? 'Unknown Player',
+                  role: p['role'] ?? 'Player',
+                  imagePath: p['image'] != null
+                      ? 'data:image/jpeg;base64,${p['image']}'
                       : 'assets/players/profile.png',
-                  stats: _getPlayerStats(player),
+                  stats: _getPlayerStats(p),
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (_) => PlayerProfilePage(player: player)),
+                      builder: (_) => PlayerProfilePage(player: p),
+                    ),
                   ),
                 ),
               );
@@ -138,9 +149,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildManOfTheMatchCard(dynamic player) {
-    final scores = player['scores'];
-    final runs = scores['runs']?.last ?? '0';
-    final wickets = scores['wickets']?.last ?? '0';
+    final scores = player['scores'] as Map<String, dynamic>? ?? {};
+    final runs = (scores['runs'] as List?)?.last?.toString() ?? '0';
+    final wickets = (scores['wickets'] as List?)?.last?.toString() ?? '0';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -165,9 +176,9 @@ class _HomePageState extends State<HomePage> {
                   CircleAvatar(
                     radius: 40,
                     backgroundImage: player['image'] != null
-                        ? MemoryImage(base64Decode(player['image']
-                            .split(',')
-                            .last)) // Fixed base64 decode
+                        ? MemoryImage(
+                            base64Decode(player['image'].toString()),
+                          )
                         : const AssetImage('assets/players/profile.png')
                             as ImageProvider,
                   ),
@@ -216,17 +227,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   String _getPlayerStats(Map<String, dynamic> player) {
-    if (player['scores'] == null) return '';
+    final scores = player['scores'] as Map<String, dynamic>?;
+    if (scores == null) return '';
 
-    final scores = player['scores'];
-    if (scores['career'] != null && scores['career']['ranking'] != null) {
-      return 'Rank: ${scores['career']['ranking']}';
+    if (scores['career'] is Map &&
+        (scores['career'] as Map).containsKey('ranking')) {
+      return 'Rank: ${(scores['career'] as Map)['ranking']}';
     }
-    if (scores['runs'] != null && scores['runs'].isNotEmpty) {
-      return 'Runs: ${scores['runs'].last}';
+    if (scores['runs'] is List && (scores['runs'] as List).isNotEmpty) {
+      return 'Runs: ${(scores['runs'] as List).last}';
     }
-    if (scores['wickets'] != null && scores['wickets'].isNotEmpty) {
-      return 'Wickets: ${scores['wickets'].last}';
+    if (scores['wickets'] is List && (scores['wickets'] as List).isNotEmpty) {
+      return 'Wickets: ${(scores['wickets'] as List).last}';
     }
     return '';
   }

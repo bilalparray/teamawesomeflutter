@@ -216,12 +216,12 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     final runs = _parseNumberList(scores['runs']);
     final wickets = _parseNumberList(scores['wickets']);
     final balls = _parseNumberList(scores['balls']);
-    final innings = _parseNumberList(scores['innings']);
+    // final innings = _parseNumberList(scores['innings']);
 
     return {
       'Total Runs': _sumValues(runs),
       'Total Wickets': _sumValues(wickets),
-      'Matches': _countValidEntries(innings),
+      'Matches': _countValidEntries(runs),
       'Average': _calculateAverage(runs),
       'Strike Rate': _calculateStrikeRate(runs, balls),
       'Centuries': _countCenturies(runs),
@@ -234,12 +234,12 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     final runs = _parseNumberList(career['runs']);
     final wickets = _parseNumberList(career['wickets']);
     final balls = _parseNumberList(career['balls']);
-    final innings = _parseNumberList(career['innings']);
+    // final innings = _parseNumberList(career['innings']);
 
     return {
       'Career Runs': _sumValues(runs),
       'Career Wickets': _sumValues(wickets),
-      'Total Matches': _countValidEntries(innings),
+      'Total Matches': _countValidEntries(runs),
       'Batting Avg': _calculateAverage(runs),
       'Strike Rate': _calculateStrikeRate(runs, balls),
       '100s': _countCenturies(runs),
