@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamawesomeflutter/pages/player_profile_page.dart';
 import 'package:teamawesomeflutter/widgets/custom_app_bar.dart';
 import '../services/batting_order_service.dart';
 import '../services/player_service.dart';
@@ -73,14 +74,48 @@ class _BattingOrderPageState extends State<BattingOrderPage> {
               itemCount: players.length,
               itemBuilder: (context, index) {
                 final player = players[index];
-                return ListTile(
-                  leading: CircleAvatar(
-                    child: Text('${index + 1}'),
+                return Card(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  title: Text(player.name),
-                  subtitle: player.lastFourScores.isNotEmpty
-                      ? Text('Last 4 runs: ${player.lastFourScores.join(", ")}')
-                      : const Text('No recent runs data'),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.blueAccent,
+                      child: Text('${index + 1}'),
+                    ),
+                    title: Text(
+                      player.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: player.lastFourScores.isNotEmpty
+                        ? Text(
+                            'Last 4 runs: ${player.lastFourScores.join(", ")}')
+                        : const Text('No recent runs data'),
+                    trailing:
+                        const Icon(Icons.arrow_forward_ios_rounded, size: 20),
+                    onTap: () {
+                      // Find the full player object
+                      final fullPlayer = PlayerService.players.firstWhere(
+                        (p) =>
+                            p['name'].toString().toLowerCase() ==
+                            player.name.toLowerCase(),
+                        orElse: () => null,
+                      );
+
+                      if (fullPlayer != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                PlayerProfilePage(player: fullPlayer),
+                          ),
+                        );
+                      }
+                    },
+                  ),
                 );
               },
             );
