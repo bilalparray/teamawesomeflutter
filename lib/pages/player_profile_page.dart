@@ -36,9 +36,18 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          // Modern Header with Parallax Image
-          SliverToBoxAdapter(
-            child: _buildProfileHeader(context),
+          // Collapsible App Bar with Image and Metadata
+          SliverAppBar(
+            expandedHeight: 400,
+            pinned: true,
+            title: Text(widget.player['name'] ?? 'Player Profile'),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
+            ),
+            flexibleSpace: FlexibleSpaceBar(
+              background: _buildFlexibleSpaceBackground(),
+            ),
           ),
           // Sticky Tabs
           SliverPersistentHeader(
@@ -65,69 +74,59 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     );
   }
 
-  // Profile Header with Image Background and Metadata
-  Widget _buildProfileHeader(BuildContext context) {
-    return Container(
-      height: 400,
-      decoration: BoxDecoration(
-        image: DecorationImage(
+  // Flexible Space Background with Image and Metadata
+  Widget _buildFlexibleSpaceBackground() {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Image(
           image: _getImageProvider(widget.player),
           fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(
-            Colors.black.withOpacity(0.4),
-            BlendMode.dstATop,
-          ),
         ),
-      ),
-      child: Stack(
-        children: [
-          // Gradient Overlay
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.transparent,
-                  Colors.black.withOpacity(0.8),
-                ],
-              ),
-            ),
-          ),
-          // Player Info
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.player['name'] ?? 'Player Name',
-                  style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    _buildInfoPill('Born', _parseDate(widget.player['born'])),
-                    _buildInfoPill('Debut', _parseDate(widget.player['debut'])),
-                    _buildInfoPill(
-                        'Batting', widget.player['battingstyle'] ?? 'N/A'),
-                    _buildInfoPill(
-                        'Bowling', widget.player['bowlingstyle'] ?? 'N/A'),
-                    _buildInfoPill('Role', widget.player['role'] ?? 'N/A'),
-                  ],
-                ),
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.transparent,
+                Colors.black.withOpacity(0.8),
               ],
             ),
           ),
-        ],
-      ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.player['name'] ?? 'Player Name',
+                style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _buildInfoPill('Born', _parseDate(widget.player['born'])),
+                  _buildInfoPill('Debut', _parseDate(widget.player['debut'])),
+                  _buildInfoPill(
+                      'Batting', widget.player['battingstyle'] ?? 'N/A'),
+                  _buildInfoPill(
+                      'Bowling', widget.player['bowlingstyle'] ?? 'N/A'),
+                  _buildInfoPill('Role', widget.player['role'] ?? 'N/A'),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
