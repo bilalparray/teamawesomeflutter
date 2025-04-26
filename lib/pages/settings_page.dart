@@ -1,13 +1,250 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_app_bar.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
+
+  @override
+  _SettingsPageState createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  String _version = '';
+  String _buildNumber = '';
+  bool _isDarkMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPackageInfo();
+    _loadDarkModePreference();
+  }
+
+  Future<void> _loadPackageInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      _version = info.version;
+      _buildNumber = info.buildNumber;
+    });
+  }
+
+  Future<void> _loadDarkModePreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isDarkMode = prefs.getBool('isDarkMode') ?? false;
+    });
+  }
+
+  Future<void> _setDarkMode(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isDarkMode', value);
+    setState(() {
+      _isDarkMode = value;
+    });
+    // Note: Update app theme in MaterialApp using a provider or similar
+  }
+
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid URL')),
+      );
+      return;
+    }
+    final opened = await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    );
+    if (!opened) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not open ${uri.toString()}')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: const CustomAppBar(title: Text('Settings')),
-      body: const Center(child: Text('Settings coming soon!')),
+      appBar: AppBar(
+        title: const Text('Settings'),
+        centerTitle: true,
+        backgroundColor: theme.primaryColor,
+        foregroundColor: Colors.white,
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        children: [
+          // App Header
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 48,
+                  backgroundColor: Colors.transparent,
+                  child: Image.asset(
+                    'assets/icon/icon.png',
+                    width: 96,
+                    height: 96,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Team Awesome Sozeith',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 12),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 32.0),
+                  child: Text(
+                    'Manage your app preferences, share the app, check for updates, and learn more about Team Awesome Sozeith.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 32, thickness: 1),
+
+          // App Section
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              'App',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: theme.textTheme.titleLarge?.color,
+              ),
+            ),
+          ),
+          _buildSettingTile(
+            context,
+            icon: Icons.share,
+            title: 'Share App',
+            subtitle: 'Tell others about the app',
+            onTap: () {
+              Share.share(
+                'Check out Team Awesome Sozeith! Download now: https://play.google.com/store/apps/details?id=com.teamawesome.sozeith',
+              );
+            },
+          ),
+          _buildSettingTile(
+            context,
+            icon: Icons.system_update,
+            title: 'Check for Updates',
+            onTap: () {
+              _launchUrl(
+                  'https://play.google.com/store/apps/details?id=com.teamawesome.sozeith');
+            },
+          ),
+
+          // Legal Section
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              'Legal',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: theme.textTheme.titleLarge?.color,
+              ),
+            ),
+          ),
+          _buildSettingTile(
+            context,
+            icon: Icons.privacy_tip,
+            title: 'Privacy Policy',
+            onTap: () {
+              _launchUrl('https://qayham.com');
+            },
+          ),
+
+          // Support Section
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              'Support',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: theme.textTheme.titleLarge?.color,
+              ),
+            ),
+          ),
+          _buildSettingTile(
+            context,
+            icon: Icons.feedback,
+            title: 'Feedback & Review',
+            subtitle: 'Help us improve by leaving a review',
+            onTap: () {
+              _launchUrl(
+                  'https://play.google.com/store/apps/details?id=com.qayham.quickunits&reviewId=0');
+            },
+          ),
+          _buildSettingTile(
+            context,
+            icon: Icons.mail_outline,
+            title: 'Contact Support',
+            subtitle: 'support@teamawesome.sozeith',
+            onTap: () {
+              _launchUrl('mailto:support@teamawesome.sozeith');
+            },
+          ),
+
+          const Divider(height: 32, thickness: 1),
+
+          // Version Info
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Center(
+              child: Text(
+                'Version: $_version+$_buildNumber',
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSettingTile(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    String? subtitle,
+    Widget? trailing,
+    VoidCallback? onTap,
+  }) {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      child: ListTile(
+        leading: Icon(icon, color: Theme.of(context).primaryColor, size: 24),
+        title: Text(
+          title,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
+        subtitle: subtitle != null
+            ? Text(
+                subtitle,
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              )
+            : null,
+        trailing: trailing,
+        onTap: onTap,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      ),
     );
   }
 }
