@@ -84,15 +84,34 @@ class _BattingOrderPageState extends State<BattingOrderPage> {
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundColor: Colors.blueAccent,
-                      child: Text('${index + 1}'),
+                      child: Text(
+                        '${index + 1}',
+                        style: const TextStyle(
+                          color: Colors.white, // 👈 text color white
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                     title: Text(
                       player.name,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColor,
+                      ),
                     ),
                     subtitle: player.lastFourScores.isNotEmpty
-                        ? Text(
-                            'Last 4 runs: ${player.lastFourScores.join(", ")}')
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  'Last 4 runs: ${player.lastFourScores.join(", ")}'),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Total of last 4: ${player.lastFourScores.reduce((a, b) => a + b)}',
+                                style: const TextStyle(color: Colors.black54),
+                              ),
+                            ],
+                          )
                         : const Text('No recent runs data'),
                     trailing:
                         const Icon(Icons.arrow_forward_ios_rounded, size: 20),
