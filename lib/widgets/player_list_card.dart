@@ -7,6 +7,7 @@ class PlayerListCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const PlayerListCard({
+    super.key,
     required this.name,
     required this.role,
     required this.imagePath,

@@ -6,6 +6,7 @@ class BannerWidget extends StatelessWidget {
   final String subtitle;
 
   const BannerWidget({
+    super.key,
     required this.imagePath,
     required this.title,
     required this.subtitle,
@@ -19,7 +20,7 @@ class BannerWidget extends StatelessWidget {
         // Container(
         //   width: double.infinity,
         //   height: 200,
-         
+
         // ),
         Positioned(
           left: 16,

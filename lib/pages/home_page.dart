@@ -5,6 +5,7 @@ import 'player_profile_page.dart';
 import 'settings_page.dart';
 
 class HomePage extends StatelessWidget {
+  HomePage({super.key});
   final featuredPlayers = [
     {
       'name': 'Rohit Sharma',
@@ -218,7 +219,7 @@ class HomePage extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: 150, // Reduced height to prevent vertical overflow
+            height: 180, // Reduced height to prevent vertical overflow
             child: ListView.builder(
               padding: const EdgeInsets.only(left: 16),
               scrollDirection: Axis.horizontal,

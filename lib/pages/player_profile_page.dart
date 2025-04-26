@@ -3,7 +3,7 @@ import '../widgets/custom_app_bar.dart';
 
 class PlayerProfilePage extends StatelessWidget {
   final Map<String, String> player;
-  const PlayerProfilePage({required this.player});
+  const PlayerProfilePage({super.key, required this.player});
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +42,10 @@ class PlayerProfilePage extends StatelessWidget {
               Expanded(
                 child: TabBarView(
                   children: [
-                    _statsTable({'Matches': '10', 'Runs': '450', 'Wickets': '12'}),
-                    _statsTable({'Matches': '75', 'Runs': '2890', 'Wickets': '102'}),
+                    _statsTable(
+                        {'Matches': '10', 'Runs': '450', 'Wickets': '12'}),
+                    _statsTable(
+                        {'Matches': '75', 'Runs': '2890', 'Wickets': '102'}),
                   ],
                 ),
               ),
@@ -64,7 +66,8 @@ class PlayerProfilePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(e.key, style: const TextStyle(fontWeight: FontWeight.w500)),
-              Text(e.value, style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(e.value,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
             ],
           ),
         );

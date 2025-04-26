@@ -8,6 +8,7 @@ class PlayerCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const PlayerCard({
+    super.key,
     required this.name,
     required this.role,
     required this.imagePath,
@@ -37,7 +38,7 @@ class PlayerCard extends StatelessWidget {
                 children: [
                   Container(
                     width: double.infinity,
-                    height: 70, // Fixed height for image container
+                    height: 100, // Fixed height for image container
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       image: DecorationImage(

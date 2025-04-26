@@ -4,6 +4,7 @@ import '../widgets/custom_app_bar.dart';
 import 'player_profile_page.dart';
 
 class PlayersPage extends StatelessWidget {
+  PlayersPage({super.key});
   final List<Map<String, String>> players = [
     {
       'name': 'Rohit Sharma',

@@ -1,0 +1,65 @@
+[
+    {
+        "scores": {
+            "career": {
+                "balls": [
+                    "3248",
+                    "14",
+                    "7"
+                ],
+                "runs": [
+                    "63",
+                    "0",
+                    "0",
+                    "6",
+                    "74"
+                ],
+                "wickets": [
+                    "",
+                    "",
+                    "0"
+                ],
+                "innings": [
+                    "1",
+                    "20",
+                    "35",
+                    "44"
+                ],
+                "ranking": "1"
+            },
+            "runs": [
+                "63",
+                "0",
+                "0",
+                "6",
+                "74"
+            ],
+            "balls": [
+                "0",
+                "18",
+                "66"
+            ],
+            "wickets": [
+                "0",
+                "0"
+            ],
+            "lastfour": [
+                "74"
+            ],
+            "innings": [
+                "1",
+                "20",
+                "74"
+            ]
+        },
+        "_id": "66371324442263bcbca255d2",
+        "name": "Bilal Ahmad Parray",
+        "role": "Batsman",
+        "born": "2000-06-03T00:00:00.000Z",
+        "birthplace": "Sozeith Kashmir ",
+        "battingstyle": "Right Handed Batsman ",
+        "bowlingstyle": "Right Arm Slow",
+        "debut": "2020-05-05T00:00:00.000Z",
+        "image": "/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAEsASwDASIAAhEBAxEB/8QAHAAAAgMBAQEBAAAAAAAAAAAABAUDBgcCAQAI/8QAOxAAAgEDAwMDAwIEBAUEAwAAAQIDAAQRBRIhBhMxIkFRFDJhByMVM0JxJFKBkRYlQ2KxJoKSoTRywf/EABsZv5lQXc+wxrngH2oEeXs7CTt7sR/wCWlF+29xjxR966TTBlz4oW7h2qM+9NAD7VZAF8020uV7eDIzSu1tZDICv2k05nVoYwiYp1YAV0d024e/mjtL3pv/bZlIp10z0zLrZzCufmrC+inTma3ZRuXg1ow8VyHKDRnzQlrotsKip7B1gvF43MTxVk1SwYRHavq/tSu20xw4kVT3R4q3Nw2kQTZalmUac7DiRlqnajc/8ALGhfmbd5p5ftPZWIa4+5xgYqoTTAkiT+bmsCxygx1ZHbuYs"
+    }
+]
