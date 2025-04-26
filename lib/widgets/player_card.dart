@@ -19,10 +19,11 @@ class PlayerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.only(right: 12, bottom: 8), // Adjusted margins
+      margin: const EdgeInsets.all(16),
+      // margin: const EdgeInsets.only(right: 12, bottom: 8), // Adjusted margins
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
-      elevation: 2,
+      elevation: 1,
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: onTap,
