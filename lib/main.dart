@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'pages/home_page.dart';
-import 'pages/players_page.dart';
+import 'pages/players_list_page.dart';
 import 'pages/settings_page.dart';
 
 void main() {

@@ -1,3 +1,6 @@
+// player_list_card.dart
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 class PlayerListCard extends StatelessWidget {
@@ -7,7 +10,6 @@ class PlayerListCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const PlayerListCard({
-    super.key,
     required this.name,
     required this.role,
     required this.imagePath,
@@ -36,7 +38,7 @@ class PlayerListCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: AssetImage(imagePath),
+                    image: _getImageProvider(imagePath),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -80,5 +82,20 @@ class PlayerListCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  ImageProvider _getImageProvider(String imagePath) {
+    if (imagePath.startsWith('data:image')) {
+      // Handle base64 image
+      try {
+        final base64String = imagePath.split(',').last;
+        return MemoryImage(base64Decode(base64String));
+      } catch (e) {
+        return const AssetImage('assets/players/profile.png');
+      }
+    } else {
+      // Handle asset path
+      return AssetImage(imagePath);
+    }
   }
 }
