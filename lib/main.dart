@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:teamawesomeflutter/pages/batting_order_page.dart';
 
 import 'pages/home_page.dart';
 import 'pages/players_list_page.dart';
@@ -28,13 +29,20 @@ class CricketTeamApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
+  const MainPage({super.key});
+
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
-  final _pages = [HomePage(), PlayersPage(), SettingsPage()];
+  final _pages = [
+    HomePage(),
+    PlayersPage(),
+    BattingOrderPage(),
+    SettingsPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +56,8 @@ class _MainPageState extends State<MainPage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Players'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.sports_cricket), label: 'Batting Order'),
           BottomNavigationBarItem(
               icon: Icon(Icons.settings), label: 'Settings'),
         ],

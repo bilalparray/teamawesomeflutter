@@ -6,6 +6,8 @@ import '../widgets/player_list_card.dart';
 import 'player_profile_page.dart';
 
 class PlayersPage extends StatelessWidget {
+  const PlayersPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final players = PlayerService.players;

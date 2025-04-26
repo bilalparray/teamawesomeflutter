@@ -18,7 +18,7 @@ const Map<String, IconData> statIcons = {
 
 class PlayerProfilePage extends StatefulWidget {
   final Map<String, dynamic> player;
-  const PlayerProfilePage({Key? key, required this.player}) : super(key: key);
+  const PlayerProfilePage({super.key, required this.player});
 
   @override
   _PlayerProfilePageState createState() => _PlayerProfilePageState();
