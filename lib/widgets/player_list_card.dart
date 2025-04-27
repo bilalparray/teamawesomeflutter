@@ -13,8 +13,8 @@ class PlayerListCard extends StatelessWidget {
     required this.role,
     required this.imagePath,
     required this.onTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

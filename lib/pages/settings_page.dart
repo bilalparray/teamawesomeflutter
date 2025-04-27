@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:teamawesomesozeith/environment/environemnt.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -115,7 +116,7 @@ class _SettingsPageState extends State<SettingsPage> {
             subtitle: 'Tell others about the app',
             onTap: () {
               Share.share(
-                'Check out Team Awesome Sozeith! Download now: https://play.google.com/store/apps/details?id=com.qayham.teamawesomesozeith',
+                'Check out Team Awesome Sozeith! Download now: ${Environment.playstoreUrl}',
               );
             },
           ),
@@ -124,8 +125,7 @@ class _SettingsPageState extends State<SettingsPage> {
             icon: Icons.system_update,
             title: 'Check for Updates',
             onTap: () {
-              _launchUrl(
-                  'https://play.google.com/store/apps/details?id=com.qayham.teamawesomesozeith');
+              _launchUrl(Environment.playstoreUrl);
             },
           ),
 
@@ -146,8 +146,7 @@ class _SettingsPageState extends State<SettingsPage> {
             icon: Icons.privacy_tip,
             title: 'Privacy Policy',
             onTap: () {
-              _launchUrl(
-                  'https://qayham.com/products/teamawesomesozeith/privacy.html');
+              _launchUrl(Environment.privacyPolicy);
             },
           ),
 
@@ -169,8 +168,7 @@ class _SettingsPageState extends State<SettingsPage> {
             title: 'Feedback & Review',
             subtitle: 'Help us improve by leaving a review',
             onTap: () {
-              _launchUrl(
-                  'https://play.google.com/store/apps/details?id=com.qayham.quickunits&reviewId=0');
+              _launchUrl(Environment.playstoreUrl);
             },
           ),
           _buildSettingTile(
