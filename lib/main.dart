@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teamawesomesozeith/pages/batting_order_page.dart';
 import 'pages/home_page.dart';
 import 'pages/players_list_page.dart';
 import 'pages/settings_page.dart';
+import 'pages/onboarding_page.dart';
 
-void main() {
-  runApp(CricketTeamApp());
+void main() async {
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Important for async code before runApp
+  final prefs = await SharedPreferences.getInstance();
+  final isFirstTime = prefs.getBool('isFirstTime') ?? true;
+
+  runApp(CricketTeamApp(isFirstTime: isFirstTime));
 }
 
 class CricketTeamApp extends StatelessWidget {
-  const CricketTeamApp({super.key});
+  final bool isFirstTime;
+  const CricketTeamApp({super.key, required this.isFirstTime});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +30,7 @@ class CricketTeamApp extends StatelessWidget {
         primarySwatch: Colors.green,
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: MainPage(),
+      home: isFirstTime ? const OnboardingPage() : const MainPage(),
     );
   }
 }
@@ -36,7 +44,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
-  final _pages = [
+  final _pages = const [
     HomePage(),
     PlayersPage(),
     BattingOrderPage(),
