@@ -14,6 +14,11 @@ const Map<String, IconData> statIcons = {
   'Avg': Icons.trending_up,
   'Career Runs': Icons.sports_cricket,
   'Career Wkts': Icons.sports_baseball,
+  'Rank': Icons.star,
+  '50s': Icons.sports_cricket,
+  '100s': Icons.sports_cricket,
+  'Best': Icons.sports_cricket,
+  'Balls': Icons.sports_baseball
 };
 
 class PlayerProfilePage extends StatefulWidget {
@@ -238,15 +243,19 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
   }
 
   Map<String, String> _processRecentScores(Map<String, dynamic> scores) {
-    final runs = _toNumList(scores['runs']);
-    final wickets = _toNumList(scores['wickets']);
-    final balls = _toNumList(scores['balls']);
+    final runsList = _toNumList(scores['runs']);
+    final wicketsList = _toNumList(scores['wickets']);
+    final ballsList = _toNumList(scores['balls']);
+
+    final lastRuns = runsList.isNotEmpty ? runsList.last : 0;
+    final lastWickets = wicketsList.isNotEmpty ? wicketsList.last : 0;
+    final lastBalls = ballsList.isNotEmpty ? ballsList.last : 0;
+
     return {
-      'Last Runs': _lastOrNA(runs),
-      'Last Wkts': _lastOrNA(wickets),
-      'Strike%': _strikeRate(runs, balls),
-      'Avg 4': _average(runs.take(4).toList()),
-      'High 4': _max(runs.take(4).toList()),
+      'Runs': lastRuns.toString(),
+      'Wickets': lastWickets.toString(),
+      'Strike%': _strikeRate([lastRuns], [lastBalls]),
+      'Balls': lastBalls.toString(),
     };
   }
 
@@ -254,12 +263,18 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     final runs = _toNumList(scores['runs']);
     final wickets = _toNumList(scores['wickets']);
     final balls = _toNumList(scores['balls']);
+    final fifties = runs.where((r) => r >= 50 && r < 100).length;
+    final hundreds = runs.where((r) => r >= 100).length;
     return {
       'Total Runs': _sum(runs),
       'Total Wkts': _sum(wickets),
       'Matches': runs.length.toString(),
       'Avg': _average(runs),
       'Strike%': _strikeRate(runs, balls),
+      "50s": fifties.toString(),
+      "100s": hundreds.toString(),
+      'Best': _max(runs),
+      'Balls': _sum(balls)
     };
   }
 
@@ -267,12 +282,22 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     final runs = _toNumList(career['runs']);
     final wickets = _toNumList(career['wickets']);
     final balls = _toNumList(career['balls']);
+    final fifties = runs.where((r) => r >= 50 && r < 100).length;
+    final hundreds = runs.where((r) => r >= 100).length;
+
     return {
+      'Rank': career['ranking'].toString(),
+
       'Career Runs': _sum(runs),
       'Career Wkts': _sum(wickets),
       'Matches': runs.length.toString(),
       'Avg': _average(runs),
       'Strike%': _strikeRate(runs, balls),
+      //add 50 and hundreds
+      "50s": fifties.toString(),
+      "100s": hundreds.toString(),
+      'Best': _max(runs),
+      'Balls': _sum(balls)
     };
   }
 
@@ -287,7 +312,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
       : (v.reduce((a, b) => a + b) / v.length).toStringAsFixed(2);
   String _strikeRate(List<num> runs, List<num> balls) {
     final totalRuns = runs.fold<double>(0.0, (sum, val) => sum + val);
-    final totalBalls = runs.fold<double>(0.0, (sum, val) => sum + val);
+    final totalBalls = balls.fold<double>(0.0, (sum, val) => sum + val);
     if (totalRuns == 0 || totalBalls == 0) return 'N/A';
     return ((totalRuns / totalBalls) * 100).toStringAsFixed(2);
   }

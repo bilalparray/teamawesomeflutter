@@ -20,7 +20,7 @@ class _OnboardingPageState extends State<OnboardingPage>
   final List<Map<String, dynamic>> _onboardingData = [
     {
       'title': 'Welcome to Team Awesome',
-      'subtitle': 'Manage your squad with ease!',
+      'subtitle': 'Trach us effortlessly!',
       'icon': Icons.group,
       'gradient': const LinearGradient(
         colors: [Colors.greenAccent, Colors.teal],
@@ -30,7 +30,8 @@ class _OnboardingPageState extends State<OnboardingPage>
     },
     {
       'title': 'Track Epic Performances',
-      'subtitle': 'Monitor runs, wickets, and more!',
+      'subtitle':
+          'Monitor runs, wickets, and more of your Favourite Team Awesomies!',
       'icon': Icons.sports_cricket,
       'gradient': const LinearGradient(
         colors: [Colors.orangeAccent, Colors.redAccent],
@@ -39,8 +40,8 @@ class _OnboardingPageState extends State<OnboardingPage>
       ),
     },
     {
-      'title': 'Stay Super Organized',
-      'subtitle': 'Plan lineups and strategies!',
+      'title': 'Stay Super Informed',
+      'subtitle': 'Stay Informed About Latest Stats!',
       'icon': Icons.calendar_today,
       'gradient': const LinearGradient(
         colors: [Colors.blueAccent, Colors.purpleAccent],
