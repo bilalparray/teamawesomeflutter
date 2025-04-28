@@ -22,6 +22,7 @@ class PlayerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.all(16),
+      color: const Color.fromARGB(255, 227, 241, 231),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
       elevation: 1,

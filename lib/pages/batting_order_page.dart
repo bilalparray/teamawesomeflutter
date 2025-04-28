@@ -104,11 +104,12 @@ class _BattingOrderPageState extends State<BattingOrderPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  'Last 4 runs: ${player.lastFourScores.join(", ")}'),
+                                  'Last Four Matches: ${player.lastFourScores.join(", ")}'),
                               const SizedBox(height: 4),
                               Text(
-                                'Total of last 4: ${player.lastFourScores.reduce((a, b) => a + b)}',
-                                style: const TextStyle(color: Colors.black54),
+                                'Total: ${player.lastFourScores.reduce((a, b) => a + b)}',
+                                style: const TextStyle(
+                                    color: Color.fromARGB(137, 172, 71, 215)),
                               ),
                             ],
                           )
