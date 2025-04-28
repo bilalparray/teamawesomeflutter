@@ -103,10 +103,13 @@ class PlayerCard extends StatelessWidget {
   // Function to get ImageProvider based on whether the path is base64 or asset
   ImageProvider _getImage(String path) {
     if (path.startsWith('data:image')) {
-      // If it's base64 data, decode it and use MemoryImage
+      // base64 data-URI
       return MemoryImage(base64Decode(path.split(',').last));
+    } else if (path.startsWith('http://') || path.startsWith('https://')) {
+      // network URL
+      return NetworkImage(path);
     } else {
-      // Otherwise, it's an asset path or URL
+      // asset path
       return AssetImage(path);
     }
   }

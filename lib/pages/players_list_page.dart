@@ -22,10 +22,9 @@ class PlayersPage extends StatelessWidget {
           return PlayerListCard(
             name: player['name'] ?? 'Unknown Player',
             role: player['role'] ?? 'Player',
-            imagePath:
-                player['image'] != null && player['image'].toString().isNotEmpty
-                    ? player['image'].toString()
-                    : 'assets/players/profile.png',
+            imagePath: player['image'] != null
+                ? player['image'].toString()
+                : 'assets/players/profile.png',
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(

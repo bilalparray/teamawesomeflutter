@@ -36,11 +36,8 @@ class ManOfTheMatchCard extends StatelessWidget {
                   CircleAvatar(
                     radius: 40,
                     backgroundImage: player['image'] != null
-                        ? MemoryImage(
-                            base64Decode(player['image'].toString()),
-                          )
-                        : const AssetImage('assets/players/profile.png')
-                            as ImageProvider,
+                        ? _getImage(player['image'])
+                        : const AssetImage('assets/players/profile.png'),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -84,5 +81,18 @@ class ManOfTheMatchCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  ImageProvider _getImage(String path) {
+    if (path.startsWith('data:image')) {
+      // base64 data-URI
+      return MemoryImage(base64Decode(path.split(',').last));
+    } else if (path.startsWith('http://') || path.startsWith('https://')) {
+      // network URL
+      return NetworkImage(path);
+    } else {
+      // asset path
+      return AssetImage(path);
+    }
   }
 }

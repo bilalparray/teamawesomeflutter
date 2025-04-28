@@ -7,10 +7,12 @@ class Environment {
   static const String secondaryColor = '#FFC107';
   static const String backgroundColor = '#F5F5F5';
   static const String textColor = '#333333';
-  static const String version = '0.0.2';
+  static const String version = '0.0.3';
   static const String developer = 'Bilal Ahmad Parray';
 
-  static const String baseUrl = 'https://teamawesomebackend-sgsc.onrender.com';
+  // static const String baseUrl = 'https://teamawesomebackend-sgsc.onrender.com';
+  static const String baseUrl =
+      'https://environmental-antonetta-bilalparray-82a778b4.koyeb.app';
   static const String playstoreUrl =
       'https://play.google.com/store/apps/details?id=com.qayham.teamawesomesozeith';
   static const String privacyPolicy =

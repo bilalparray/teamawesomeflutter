@@ -23,8 +23,8 @@ class FeaturedPlayersList extends StatelessWidget {
             child: PlayerCard(
               name: p['name'] ?? 'Unknown Player',
               role: p['role'] ?? 'Player',
-              imagePath: p['image'] != null
-                  ? 'data:image/jpeg;base64,${p['image']}'
+              imagePath: (p['image'] is String)
+                  ? p['image'] as String
                   : 'assets/players/profile.png',
               stats: _getPlayerStats(p),
               onTap: () => Navigator.push(

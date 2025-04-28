@@ -101,11 +101,15 @@ class PlayerListCard extends StatelessWidget {
   }
 
   ImageProvider _getImageProvider(String path) {
-    try {
-      final bytes = base64Decode(path);
-      return MemoryImage(bytes);
-    } catch (_) {
-      return const AssetImage('assets/players/profile.png');
+    if (path.startsWith('data:image')) {
+      // base64 data-URI
+      return MemoryImage(base64Decode(path.split(',').last));
+    } else if (path.startsWith('http://') || path.startsWith('https://')) {
+      // network URL
+      return NetworkImage(path);
+    } else {
+      // asset path
+      return AssetImage(path);
     }
   }
 }

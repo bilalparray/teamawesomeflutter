@@ -2,6 +2,8 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:teamawesomesozeith/environment/environemnt.dart';
+
 class PlayerService {
   static List<dynamic> _players = [];
   static dynamic _manOfTheMatch;
@@ -11,7 +13,7 @@ class PlayerService {
     if (_players.isNotEmpty) return; // <<–– already fetched this session
 
     final response = await http.get(
-      Uri.parse('https://teamawesomebackend-sgsc.onrender.com/api/players'),
+      Uri.parse('${Environment.baseUrl}/api/players'),
     );
 
     if (response.statusCode != 200) {

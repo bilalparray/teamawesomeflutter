@@ -325,7 +325,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     try {
       final img = player['image']?.toString() ?? '';
       if (img.isEmpty) throw 'no image';
-      return MemoryImage(base64Decode(img));
+      return NetworkImage(img);
     } catch (_) {
       return const AssetImage('assets/players/profile.png');
     }
