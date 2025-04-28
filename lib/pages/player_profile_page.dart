@@ -62,19 +62,23 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
             SliverAppBar(
-              expandedHeight: 280,
+              expandedHeight: 400,
               pinned: true,
-              floating: true,
+              floating: false, // Changed to false
               backgroundColor: primary,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
                 onPressed: () => Navigator.pop(context),
               ),
-              title: Text(
-                player['name'] ?? 'Player Profile',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+              title: AnimatedOpacity(
+                opacity: innerBoxIsScrolled ? 0.0 : 1.0,
+                duration: const Duration(milliseconds: 200),
+                child: Text(
+                  player['name'] ?? 'Player Profile',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: const Color.fromARGB(255, 239, 239, 239),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               centerTitle: false,
@@ -98,6 +102,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
                 ),
               ),
               flexibleSpace: FlexibleSpaceBar(
+                collapseMode: CollapseMode.pin,
                 background: Stack(
                   fit: StackFit.expand,
                   children: [
@@ -110,11 +115,13 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Colors.black.withOpacity(0.7),
+                            Colors.black.withOpacity(0.4),
                             Colors.transparent,
+                            Colors.black.withOpacity(0.2),
                           ],
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
+                          stops: const [0.0, 0.5, 1.0],
                         ),
                       ),
                     ),
@@ -317,7 +324,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     return ((totalRuns / totalBalls) * 100).toStringAsFixed(2);
   }
 
-  String _lastOrNA(List<num> v) => v.isNotEmpty ? v.last.toString() : 'N/A';
+  // String _lastOrNA(List<num> v) => v.isNotEmpty ? v.last.toString() : 'N/A';
   String _max(List<num> v) =>
       v.isNotEmpty ? v.reduce((a, b) => a > b ? a : b).toString() : 'N/A';
 
