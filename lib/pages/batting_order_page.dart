@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamawesomesozeith/main.dart';
 import 'package:teamawesomesozeith/pages/player_profile_page.dart';
 import 'package:teamawesomesozeith/widgets/custom_app_bar.dart';
 import '../services/batting_order_service.dart';
@@ -21,38 +22,48 @@ class _BattingOrderPageState extends State<BattingOrderPage> {
   }
 
   Future<List<_PlayerWithScores>> _fetchBattingOrderWithScores() async {
-    // Step 1: fetch batting order
-    final battingOrder = await BattingOrderService.fetchBattingOrder();
+    try {
+      // Step 1: fetch batting order
+      final battingOrder = await BattingOrderService.fetchBattingOrder();
 
-    // Step 2: fetch players if not already fetched
-    await PlayerService.fetchPlayers();
+      // Step 2: fetch players if not already fetched
+      await PlayerService.fetchPlayers();
 
-    final List<_PlayerWithScores> players = [];
+      final List<_PlayerWithScores> players = [];
 
-    for (final playerName in battingOrder) {
-      final player = PlayerService.players.firstWhere(
-        (p) => p['name'].toString().toLowerCase() == playerName.toLowerCase(),
-        orElse: () => null,
-      );
+      for (final playerName in battingOrder) {
+        try {
+          final player = PlayerService.players.firstWhere(
+            (p) =>
+                p['name'].toString().toLowerCase() == playerName.toLowerCase(),
+            orElse: () => null,
+          );
 
-      List<int> lastFourRuns = [];
+          List<int> lastFourRuns = [];
 
-      if (player != null) {
-        final scores = player['scores'];
-        if (scores != null && scores['runs'] != null) {
-          final runsList = List<String>.from(scores['lastfour']);
-          lastFourRuns = runsList.reversed
-              .take(4)
-              .map((e) => int.tryParse(e) ?? 0)
-              .toList();
+          if (player != null && player.isNotEmpty) {
+            final scores = player['scores'] as Map<String, dynamic>? ?? {};
+            final lastFour = scores['lastfour'] as List<dynamic>? ?? [];
+
+            lastFourRuns = lastFour.reversed
+                .take(4)
+                .map((e) => int.tryParse(e.toString()) ?? 0)
+                .toList();
+          }
+
+          players.add(_PlayerWithScores(
+              name: playerName, lastFourScores: lastFourRuns));
+        } catch (e) {
+          players.add(_PlayerWithScores(name: playerName, lastFourScores: []));
         }
       }
 
-      players.add(
-          _PlayerWithScores(name: playerName, lastFourScores: lastFourRuns));
+      return players;
+    } catch (e) {
+      // Dispatch error notification to show error screen
+      ApiErrorNotification().dispatch(context);
+      return [];
     }
-
-    return players;
   }
 
   @override

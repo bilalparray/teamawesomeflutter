@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamawesomesozeith/main.dart';
 import '../services/player_service.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/hero_header.dart';
@@ -31,6 +32,11 @@ class _HomePageState extends State<HomePage> {
       await PlayerService.fetchPlayers();
       setState(() => isLoading = false);
     } catch (e) {
+      setState(() {
+        errorMessage = e.toString();
+        isLoading = false;
+      });
+      ApiErrorNotification().dispatch(context);
       setState(() {
         errorMessage = e.toString();
         isLoading = false;
