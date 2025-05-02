@@ -2,25 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 const Map<String, IconData> statIcons = {
-  'Last Runs': Icons.sports_cricket,
+  'Last Runs': Icons.run_circle,
   'Last Wkts': Icons.sports_baseball,
   'Strike%': Icons.speed,
   'Avg 4': Icons.trending_up,
-  'High 4': Icons.arrow_upward,
-  'Total Runs': Icons.sports_cricket,
-  'Total Wkts': Icons.sports_baseball,
-  'Matches': Icons.event,
-  'Avg': Icons.trending_up,
-  'Career Runs': Icons.sports_cricket,
-  'Career Wkts': Icons.sports_baseball,
-  'Rank': Icons.star,
-  '50s': Icons.sports_cricket,
-  '100s': Icons.sports_cricket,
-  'Best': Icons.sports_cricket,
+  'High 4': Icons.insights,
+  'Total Runs': Icons.emoji_events,
+  'Total Wkts': Icons.workspace_premium,
+  'Matches': Icons.event_available,
+  'Avg': Icons.calculate,
+  'Career Runs': Icons.history_edu,
+  'Career Wkts': Icons.history,
+  'Rank': Icons.leaderboard,
+  '50s': Icons.looks_5,
+  '100s': Icons.looks_one,
+  'Best': Icons.workspace_premium,
   'Balls': Icons.sports_baseball,
   'Match': Icons.sports_cricket,
-  'Runs': Icons.sports_cricket,
-  'Wickets': Icons.sports_baseball,
+  'Runs': Icons.directions_run,
+  'Wickets': Icons.star,
 };
 
 class PlayerProfilePage extends StatefulWidget {
@@ -34,69 +34,105 @@ class PlayerProfilePage extends StatefulWidget {
 class _PlayerProfilePageState extends State<PlayerProfilePage>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
-  double _opacity = 0.0;
+  final double _appBarMaxHeight = 280;
+  final double _appBarMinHeight = kToolbarHeight + 10;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 6, vsync: this);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() => _opacity = 1.0);
-    });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
   Future<bool> _onWillPop() async {
     if (_tabController.index != 0) {
-      // If not on Profile tab, go back to it
       _tabController.animateTo(0);
-      return false; // cancel the pop
+      return false;
     }
-    // Already on Profile → allow pop
     return true;
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final primary = theme.primaryColor;
+    final colors = theme.colorScheme;
     final player = widget.player;
 
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
         body: NestedScrollView(
+          controller: _scrollController,
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(
-              expandedHeight: 400,
+              expandedHeight: _appBarMaxHeight,
+              collapsedHeight: _appBarMinHeight,
               pinned: true,
               floating: false,
-              backgroundColor: primary,
+              backgroundColor: colors.primary,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
                 onPressed: () => Navigator.pop(context),
               ),
               title: AnimatedOpacity(
-                opacity: innerBoxIsScrolled ? 0.0 : 1.0,
+                opacity: innerBoxIsScrolled ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 200),
-                child: Text(
-                  player['name'] ?? 'Player Profile',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: const Color.fromARGB(255, 239, 239, 239),
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundImage: _getImageProvider(player),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      player['name'] ?? 'Player',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              flexibleSpace: FlexibleSpaceBar(
+                collapseMode: CollapseMode.parallax,
+                background: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image(
+                      image: _getImageProvider(player),
+                      fit: BoxFit.cover,
+                      alignment: Alignment.topCenter,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            colors.primary.withOpacity(0.8),
+                            Colors.transparent,
+                            colors.primary.withOpacity(0.6),
+                          ],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          stops: const [0.0, 0.5, 1.0],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(48),
                 child: Container(
-                  color: primary,
                   alignment: Alignment.centerLeft,
+                  color: colors.primary,
                   child: TabBar(
                     controller: _tabController,
                     indicatorColor: Colors.white,
@@ -120,50 +156,19 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
                   ),
                 ),
               ),
-              flexibleSpace: FlexibleSpaceBar(
-                collapseMode: CollapseMode.pin,
-                background: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image(
-                      image: _getImageProvider(player),
-                      fit: BoxFit.cover,
-                      alignment: Alignment.topCenter,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.black.withOpacity(0.4),
-                            Colors.transparent,
-                            Colors.black.withOpacity(0.2),
-                          ],
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                          stops: const [0.0, 0.5, 1.0],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ),
           ],
-          body: AnimatedOpacity(
-            opacity: _opacity,
-            duration: const Duration(milliseconds: 500),
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildProfileSection(player),
-                _statsGrid(_processRecentScores(player['scores'] ?? {})),
-                _statsGrid(_processYearScores(player['scores'] ?? {})),
-                _statsGrid(
-                    _processCareerScores(player['scores']?['career'] ?? {})),
-                _statsGrid(_processRunsScores(player['scores'] ?? {})),
-                _statsGrid(_processWicketsScores(player['scores'] ?? {})),
-              ],
-            ),
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildProfileSection(player),
+              _statsGrid(_processRecentScores(player['scores'] ?? {})),
+              _statsGrid(_processYearScores(player['scores'] ?? {})),
+              _statsGrid(
+                  _processCareerScores(player['scores']?['career'] ?? {})),
+              _statsGrid(_processRunsScores(player['scores'] ?? {})),
+              _statsGrid(_processWicketsScores(player['scores'] ?? {})),
+            ],
           ),
         ),
       ),
@@ -171,98 +176,92 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
   }
 
   Widget _buildProfileSection(Map<String, dynamic> player) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Text(
-                player['name'] ?? 'Unknown Player',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-            ),
-            const SizedBox(height: 24),
-            _buildMetadataItem('Born', _parseDate(player['born']), Icons.cake),
-            _buildMetadataItem(
-                'Debut', _parseDate(player['debut']), Icons.sports_cricket),
-            _buildMetadataItem('Batting Style', player['battingstyle'] ?? 'N/A',
-                Icons.sports_handball),
-            _buildMetadataItem('Bowling Style', player['bowlingstyle'] ?? 'N/A',
-                Icons.sports_baseball),
-            _buildMetadataItem('Role', player['role'] ?? 'N/A', Icons.person),
-          ],
-        ),
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      child: Column(
+        children: [
+          _buildProfileTile('Born', _parseDate(player['born']), Icons.cake),
+          _buildProfileTile('Debut', _parseDate(player['debut']), Icons.flag),
+          _buildProfileTile(
+              'Batting Style', player['battingstyle'], Icons.sports_baseball),
+          _buildProfileTile(
+              'Bowling Style', player['bowlingstyle'], Icons.sports_cricket),
+          _buildProfileTile('Role', player['role'], Icons.person),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+        ],
       ),
     );
   }
 
-  Widget _buildMetadataItem(String label, String value, IconData icon) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
+  Widget _buildProfileTile(String title, String? value, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
       child: ListTile(
-        leading: Icon(icon, color: Theme.of(context).primaryColor, size: 24),
-        title: Text(label,
-            style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-        trailing: Text(value,
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+        leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
+        title: Text(title,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey[600],
+                )),
+        subtitle: Text(value ?? 'N/A',
+            style: Theme.of(context).textTheme.titleMedium),
+        contentPadding: EdgeInsets.zero,
       ),
     );
   }
 
   Widget _statsGrid(Map<String, String> stats) {
-    return Padding(
+    return GridView.builder(
       padding: const EdgeInsets.all(16),
-      child: GridView.count(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        childAspectRatio: 1.6,
-        children: stats.entries.map((e) => _statCard(e.key, e.value)).toList(),
+        crossAxisSpacing: 12,
+        childAspectRatio: 1.4,
       ),
+      itemCount: stats.length,
+      itemBuilder: (context, index) {
+        final entry = stats.entries.elementAt(index);
+        return _statCard(entry.key, entry.value);
+      },
     );
   }
 
   Widget _statCard(String title, String value) {
-    final baseIcon = statIcons[title] ??
-        (title.startsWith('Match') ? statIcons['Match'] : Icons.info);
+    final theme = Theme.of(context);
+    final icon = statIcons[title] ?? Icons.help;
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 4,
       child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(baseIcon, color: Theme.of(context).primaryColor, size: 24),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(title,
-                      style: TextStyle(fontSize: 12, color: Colors.grey[700])),
-                  const SizedBox(height: 4),
-                  Text(value,
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).primaryColor)),
-                ],
-              ),
+            Row(
+              children: [
+                Icon(icon, size: 24, color: theme.colorScheme.primary),
+                const SizedBox(width: 8),
+                Text(title,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    )),
+              ],
             ),
+            const SizedBox(height: 8),
+            Text(value,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
+                )),
           ],
         ),
       ),
     );
   }
 
+  // Data processing methods
   Map<String, String> _processRecentScores(Map<String, dynamic> scores) {
     final runs = _toNumList(scores['runs']);
     final wkts = _toNumList(scores['wickets']);
