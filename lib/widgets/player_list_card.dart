@@ -100,16 +100,9 @@ class PlayerListCard extends StatelessWidget {
     );
   }
 
-  ImageProvider _getImageProvider(String path) {
-    if (path.startsWith('data:image')) {
-      // base64 data-URI
-      return MemoryImage(base64Decode(path.split(',').last));
-    } else if (path.startsWith('http://') || path.startsWith('https://')) {
-      // network URL
-      return NetworkImage(path);
-    } else {
-      // asset path
-      return AssetImage(path);
-    }
+  ImageProvider _getImageProvider(String imagePath) {
+    return imagePath.isNotEmpty
+        ? NetworkImage(imagePath)
+        : const AssetImage('assets/players/profile.png');
   }
 }
