@@ -34,7 +34,7 @@ class PlayerProfilePage extends StatefulWidget {
 class _PlayerProfilePageState extends State<PlayerProfilePage>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
-  final double _appBarMaxHeight = 350;
+  final double _appBarMaxHeight = 450;
   final double _appBarMinHeight = kToolbarHeight + 10;
 
   @override
@@ -73,6 +73,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
               collapsedHeight: _appBarMinHeight,
               pinned: true,
               floating: true,
+              stretch: true,
               backgroundColor: colors.primary,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
