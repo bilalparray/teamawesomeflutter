@@ -82,10 +82,12 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
                 ),
               ),
               centerTitle: false,
+              // In the SliverAppBar's bottom property
               bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(48),
                 child: Container(
                   color: primary,
+                  alignment: Alignment.centerLeft, // Force left alignment
                   child: TabBar(
                     controller: _tabController,
                     indicatorColor: Colors.white,
@@ -93,6 +95,12 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
                     isScrollable: true,
                     unselectedLabelColor: Colors.white70,
                     labelStyle: theme.textTheme.titleMedium,
+                    padding: EdgeInsets.zero,
+                    indicatorPadding: EdgeInsets.zero,
+                    labelPadding: const EdgeInsets.symmetric(horizontal: 16),
+                    physics:
+                        const ClampingScrollPhysics(), // Prevent overscroll glow
+                    tabAlignment: TabAlignment.start, // Explicit left alignment
                     tabs: const [
                       Tab(text: 'Profile'),
                       Tab(text: 'Recent'),
@@ -325,7 +333,8 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     final wickets = _toNumList(scores['wickets']);
     final stats = <String, String>{};
     for (var i = 0; i < wickets.length; i++) {
-      stats['Match ${i + 1}'] = wickets[i].toString();
+      final matchNumber = wickets.length - i;
+      stats['Match $matchNumber'] = wickets[i].toString();
     }
     return stats;
   }
