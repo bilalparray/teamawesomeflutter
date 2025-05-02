@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -18,7 +17,8 @@ const Map<String, IconData> statIcons = {
   '50s': Icons.sports_cricket,
   '100s': Icons.sports_cricket,
   'Best': Icons.sports_cricket,
-  'Balls': Icons.sports_baseball
+  'Balls': Icons.sports_baseball,
+  'Match': Icons.sports_cricket,
 };
 
 class PlayerProfilePage extends StatefulWidget {
@@ -37,7 +37,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 6, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         _opacity = 1.0;
@@ -90,6 +90,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
                     controller: _tabController,
                     indicatorColor: Colors.white,
                     labelColor: Colors.white,
+                    isScrollable: true,
                     unselectedLabelColor: Colors.white70,
                     labelStyle: theme.textTheme.titleMedium,
                     tabs: const [
@@ -97,6 +98,8 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
                       Tab(text: 'Recent'),
                       Tab(text: 'Year'),
                       Tab(text: 'Career'),
+                      Tab(text: 'Runs'),
+                      Tab(text: 'Wickets'),
                     ],
                   ),
                 ),
@@ -142,6 +145,8 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
               _statsGrid(_processYearScores(player['scores'] ?? {})),
               _statsGrid(
                   _processCareerScores(player['scores']?['career'] ?? {})),
+              _statsGrid(_processRunsScores(player['scores'] ?? {})),
+              _statsGrid(_processWicketsScores(player['scores'] ?? {})),
             ],
           ),
         ),
@@ -212,7 +217,8 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
   }
 
   Widget _statCard(String title, String value) {
-    final icon = statIcons[title] ?? Icons.info;
+    final baseIcon = statIcons[title] ??
+        (title.startsWith('Match') ? statIcons['Match'] : Icons.info);
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 4,
@@ -220,7 +226,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
-            Icon(icon, color: Theme.of(context).primaryColor, size: 24),
+            Icon(baseIcon, color: Theme.of(context).primaryColor, size: 24),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
@@ -294,18 +300,34 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
 
     return {
       'Rank': career['ranking'].toString(),
-
       'Career Runs': _sum(runs),
       'Career Wkts': _sum(wickets),
       'Matches': runs.length.toString(),
       'Avg': _average(runs),
       'Strike%': _strikeRate(runs, balls),
-      //add 50 and hundreds
       "50s": fifties.toString(),
       "100s": hundreds.toString(),
       'Best': _max(runs),
       'Balls': _sum(balls)
     };
+  }
+
+  Map<String, String> _processRunsScores(Map<String, dynamic> scores) {
+    final runs = _toNumList(scores['runs']);
+    final stats = <String, String>{};
+    for (var i = runs.length - 1; i >= 0; i--) {
+      stats['Match ${i + 1}'] = runs[i].toString();
+    }
+    return stats;
+  }
+
+  Map<String, String> _processWicketsScores(Map<String, dynamic> scores) {
+    final wickets = _toNumList(scores['wickets']);
+    final stats = <String, String>{};
+    for (var i = 0; i < wickets.length; i++) {
+      stats['Match ${i + 1}'] = wickets[i].toString();
+    }
+    return stats;
   }
 
   List<num> _toNumList(dynamic data) {
