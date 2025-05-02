@@ -100,17 +100,9 @@ class PlayerCard extends StatelessWidget {
     );
   }
 
-  // Function to get ImageProvider based on whether the path is base64 or asset
-  ImageProvider _getImage(String path) {
-    if (path.startsWith('data:image')) {
-      // base64 data-URI
-      return MemoryImage(base64Decode(path.split(',').last));
-    } else if (path.startsWith('http://') || path.startsWith('https://')) {
-      // network URL
-      return NetworkImage(path);
-    } else {
-      // asset path
-      return AssetImage(path);
-    }
+  ImageProvider _getImage(String imagePath) {
+    return imagePath.isNotEmpty
+        ? NetworkImage(imagePath)
+        : const AssetImage('assets/players/profile.png');
   }
 }
