@@ -147,7 +147,7 @@ class _BattingOrderPageState extends State<BattingOrderPage> {
                                   const SizedBox(height: 8),
                                   if (player.lastFourScores.isNotEmpty) ...[
                                     Text(
-                                      'Last 4: ${player.lastFourScores.join(', ')}',
+                                      'Last 4 Matches: ${player.lastFourScores.join(', ')}',
                                       style: const TextStyle(fontSize: 14),
                                     ),
                                     const SizedBox(height: 4),

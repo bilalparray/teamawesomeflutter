@@ -3,16 +3,35 @@ import 'package:teamawesomesozeith/main.dart';
 import '../services/player_service.dart';
 import '../widgets/custom_app_bar.dart';
 import 'player_profile_page.dart';
+import 'batting_order_page.dart'; // Destination for nav icon
 
 class PlayersPage extends StatelessWidget {
-  const PlayersPage({super.key});
+  const PlayersPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: const Text('Players'),
-        // backgroundColor: Colors.blue.shade800,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: CustomAppBar(
+          title: const Text('Players'),
+          // Pass actions through a row
+          actions: [
+            IconButton(
+              icon: const Icon(
+                  Icons.format_list_numbered), // icon for batting order
+              tooltip: 'Batting Order',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const BattingOrderPage(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -52,7 +71,7 @@ class _PlayersContentState extends State<_PlayersContent> {
     try {
       await PlayerService.fetchPlayers();
       if (PlayerService.players.isEmpty) _showError();
-    } catch (e) {
+    } catch (_) {
       _showError();
     }
   }
@@ -91,6 +110,7 @@ class _PlayersContentState extends State<_PlayersContent> {
           backgroundColor: Colors.white,
           onRefresh: _refreshData,
           child: ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(16),
             itemCount: PlayerService.players.length,
             itemBuilder: (ctx, i) {
@@ -132,13 +152,13 @@ class PlayerCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const PlayerCard({
-    super.key,
+    Key? key,
     required this.name,
     required this.role,
     required this.imagePath,
     required this.rank,
     required this.onTap,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -179,6 +199,7 @@ class PlayerCard extends StatelessWidget {
                   ],
                 ),
               ),
+              const Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
             ],
           ),
         ),
