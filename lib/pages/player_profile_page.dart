@@ -41,9 +41,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     super.initState();
     _tabController = TabController(length: 6, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        _opacity = 1.0;
-      });
+      setState(() => _opacity = 1.0);
     });
   }
 
@@ -53,20 +51,31 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     super.dispose();
   }
 
+  Future<bool> _onWillPop() async {
+    if (_tabController.index != 0) {
+      // If not on Profile tab, go back to it
+      _tabController.animateTo(0);
+      return false; // cancel the pop
+    }
+    // Already on Profile → allow pop
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final primary = theme.primaryColor;
     final player = widget.player;
 
-    return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(
               expandedHeight: 400,
               pinned: true,
-              floating: false, // Changed to false
+              floating: false,
               backgroundColor: primary,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -83,13 +92,11 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
                   ),
                 ),
               ),
-              centerTitle: false,
-              // In the SliverAppBar's bottom property
               bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(48),
                 child: Container(
                   color: primary,
-                  alignment: Alignment.centerLeft, // Force left alignment
+                  alignment: Alignment.centerLeft,
                   child: TabBar(
                     controller: _tabController,
                     indicatorColor: Colors.white,
@@ -100,9 +107,8 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
                     padding: EdgeInsets.zero,
                     indicatorPadding: EdgeInsets.zero,
                     labelPadding: const EdgeInsets.symmetric(horizontal: 16),
-                    physics:
-                        const ClampingScrollPhysics(), // Prevent overscroll glow
-                    tabAlignment: TabAlignment.start, // Explicit left alignment
+                    physics: const ClampingScrollPhysics(),
+                    tabAlignment: TabAlignment.start,
                     tabs: const [
                       Tab(text: 'Profile'),
                       Tab(text: 'Recent'),
@@ -142,22 +148,22 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
                 ),
               ),
             ),
-          ];
-        },
-        body: AnimatedOpacity(
-          opacity: _opacity,
-          duration: const Duration(milliseconds: 500),
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              _buildProfileSection(player),
-              _statsGrid(_processRecentScores(player['scores'] ?? {})),
-              _statsGrid(_processYearScores(player['scores'] ?? {})),
-              _statsGrid(
-                  _processCareerScores(player['scores']?['career'] ?? {})),
-              _statsGrid(_processRunsScores(player['scores'] ?? {})),
-              _statsGrid(_processWicketsScores(player['scores'] ?? {})),
-            ],
+          ],
+          body: AnimatedOpacity(
+            opacity: _opacity,
+            duration: const Duration(milliseconds: 500),
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildProfileSection(player),
+                _statsGrid(_processRecentScores(player['scores'] ?? {})),
+                _statsGrid(_processYearScores(player['scores'] ?? {})),
+                _statsGrid(
+                    _processCareerScores(player['scores']?['career'] ?? {})),
+                _statsGrid(_processRunsScores(player['scores'] ?? {})),
+                _statsGrid(_processWicketsScores(player['scores'] ?? {})),
+              ],
+            ),
           ),
         ),
       ),
@@ -174,9 +180,10 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
             Center(
               child: Text(
                 player['name'] ?? 'Unknown Player',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 24),
@@ -201,14 +208,10 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
       elevation: 2,
       child: ListTile(
         leading: Icon(icon, color: Theme.of(context).primaryColor, size: 24),
-        title: Text(
-          label,
-          style: TextStyle(color: Colors.grey[600], fontSize: 14),
-        ),
-        trailing: Text(
-          value,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-        ),
+        title: Text(label,
+            style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+        trailing: Text(value,
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
       ),
     );
   }
@@ -243,19 +246,14 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    title,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[700]),
-                  ),
+                  Text(title,
+                      style: TextStyle(fontSize: 12, color: Colors.grey[700])),
                   const SizedBox(height: 4),
-                  Text(
-                    value,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
+                  Text(value,
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor)),
                 ],
               ),
             ),
@@ -266,17 +264,15 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
   }
 
   Map<String, String> _processRecentScores(Map<String, dynamic> scores) {
-    final runsList = _toNumList(scores['runs']);
-    final wicketsList = _toNumList(scores['wickets']);
-    final ballsList = _toNumList(scores['balls']);
-
-    final lastRuns = runsList.isNotEmpty ? runsList.last : 0;
-    final lastWickets = wicketsList.isNotEmpty ? wicketsList.last : 0;
-    final lastBalls = ballsList.isNotEmpty ? ballsList.last : 0;
-
+    final runs = _toNumList(scores['runs']);
+    final wkts = _toNumList(scores['wickets']);
+    final balls = _toNumList(scores['balls']);
+    final lastRuns = runs.isNotEmpty ? runs.last : 0;
+    final lastWkts = wkts.isNotEmpty ? wkts.last : 0;
+    final lastBalls = balls.isNotEmpty ? balls.last : 0;
     return {
       'Runs': lastRuns.toString(),
-      'Wickets': lastWickets.toString(),
+      'Wickets': lastWkts.toString(),
       'Strike%': _strikeRate([lastRuns], [lastBalls]),
       'Balls': lastBalls.toString(),
     };
@@ -284,91 +280,83 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
 
   Map<String, String> _processYearScores(Map<String, dynamic> scores) {
     final runs = _toNumList(scores['runs']);
-    final wickets = _toNumList(scores['wickets']);
+    final wkts = _toNumList(scores['wickets']);
     final balls = _toNumList(scores['balls']);
     final fifties = runs.where((r) => r >= 50 && r < 100).length;
     final hundreds = runs.where((r) => r >= 100).length;
     return {
       'Total Runs': _sum(runs),
-      'Total Wkts': _sum(wickets),
+      'Total Wkts': _sum(wkts),
       'Matches': runs.length.toString(),
       'Avg': _average(runs),
       'Strike%': _strikeRate(runs, balls),
-      "50s": fifties.toString(),
-      "100s": hundreds.toString(),
+      '50s': fifties.toString(),
+      '100s': hundreds.toString(),
       'Best': _max(runs),
-      'Balls': _sum(balls)
+      'Balls': _sum(balls),
     };
   }
 
   Map<String, String> _processCareerScores(Map<String, dynamic> career) {
     final runs = _toNumList(career['runs']);
-    final wickets = _toNumList(career['wickets']);
+    final wkts = _toNumList(career['wickets']);
     final balls = _toNumList(career['balls']);
     final fifties = runs.where((r) => r >= 50 && r < 100).length;
     final hundreds = runs.where((r) => r >= 100).length;
-
     return {
       'Rank': career['ranking'].toString(),
       'Career Runs': _sum(runs),
-      'Career Wkts': _sum(wickets),
+      'Career Wkts': _sum(wkts),
       'Matches': runs.length.toString(),
       'Avg': _average(runs),
       'Strike%': _strikeRate(runs, balls),
-      "50s": fifties.toString(),
-      "100s": hundreds.toString(),
+      '50s': fifties.toString(),
+      '100s': hundreds.toString(),
       'Best': _max(runs),
-      'Balls': _sum(balls)
+      'Balls': _sum(balls),
     };
   }
 
   Map<String, String> _processRunsScores(Map<String, dynamic> scores) {
     final runs = _toNumList(scores['runs']);
-    final stats = <String, String>{};
-    for (var i = runs.length - 1; i >= 0; i--) {
-      stats['Match ${i + 1}'] = runs[i].toString();
-    }
-    return stats;
+    return {
+      for (var i = runs.length - 1; i >= 0; i--)
+        'Match ${i + 1}': runs[i].toString()
+    };
   }
 
   Map<String, String> _processWicketsScores(Map<String, dynamic> scores) {
-    final wickets = _toNumList(scores['wickets']);
-    final stats = <String, String>{};
-    for (var i = 0; i < wickets.length; i++) {
-      final matchNumber = wickets.length - i;
-      stats['Match $matchNumber'] = wickets[i].toString();
-    }
-    return stats;
+    final wkts = _toNumList(scores['wickets']);
+    return {
+      for (var i = 0; i < wkts.length; i++)
+        'Match ${wkts.length - i}': wkts[i].toString()
+    };
   }
 
-  List<num> _toNumList(dynamic data) {
-    if (data is! List) return [];
-    return data.whereType<String>().map((s) => num.tryParse(s) ?? 0).toList();
-  }
+  List<num> _toNumList(dynamic data) => data is List
+      ? data.whereType<String>().map((s) => num.tryParse(s) ?? 0).toList()
+      : <num>[];
 
-  String _sum(List<num> v) => v.fold<num>(0, (a, b) => a + b).toString();
+  String _sum(List<num> v) =>
+      v.isEmpty ? '0' : v.fold<num>(0, (a, b) => a + b).toString();
   String _average(List<num> v) => v.isEmpty
       ? 'N/A'
       : (v.reduce((a, b) => a + b) / v.length).toStringAsFixed(2);
   String _strikeRate(List<num> runs, List<num> balls) {
-    final totalRuns = runs.fold<double>(0.0, (sum, val) => sum + val);
-    final totalBalls = balls.fold<double>(0.0, (sum, val) => sum + val);
-    if (totalRuns == 0 || totalBalls == 0) return 'N/A';
-    return ((totalRuns / totalBalls) * 100).toStringAsFixed(2);
+    final totalRuns = runs.fold<double>(0, (a, b) => a + b);
+    final totalBalls = balls.fold<double>(0, (a, b) => a + b);
+    return (totalRuns == 0 || totalBalls == 0)
+        ? 'N/A'
+        : ((totalRuns / totalBalls) * 100).toStringAsFixed(2);
   }
 
-  // String _lastOrNA(List<num> v) => v.isNotEmpty ? v.last.toString() : 'N/A';
   String _max(List<num> v) =>
-      v.isNotEmpty ? v.reduce((a, b) => a > b ? a : b).toString() : 'N/A';
+      v.isEmpty ? 'N/A' : v.reduce((a, b) => a > b ? a : b).toString();
 
   ImageProvider _getImageProvider(Map<String, dynamic> player) {
-    try {
-      final img = player['image']?.toString() ?? '';
-      if (img.isEmpty) throw 'no image';
-      return NetworkImage(img);
-    } catch (_) {
-      return const AssetImage('assets/players/profile.png');
-    }
+    final img = player['image']?.toString() ?? '';
+    if (img.isEmpty) return const AssetImage('assets/players/profile.png');
+    return NetworkImage(img);
   }
 
   String _parseDate(String? date) {

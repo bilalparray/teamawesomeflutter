@@ -42,7 +42,7 @@ class _OnboardingPageState extends State<OnboardingPage>
     {
       'title': 'Track Epic Performances',
       'subtitle':
-          'Monitor runs, wickets, and more of your favorite Team Awesomies!',
+          'Monitor runs wickets and more of your favorite Team Awesomies!',
       'image': 'assets/vectors/cricket.png', // PNG path
       'gradient': const LinearGradient(
         colors: [Color(0xFFFF9A8B), Color(0xFFFF6B6B)],
