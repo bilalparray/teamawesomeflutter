@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -73,7 +75,7 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
   @override
   Widget build(BuildContext context) {
     return isConnected
-        ? MainPage()
+        ? const MainPage()
         : NoInternetScreen(onRetry: _checkConnectivity);
   }
 }
@@ -100,23 +102,43 @@ class _MainPageState extends State<MainPage> {
     ];
   }
 
+  Future<bool> _onWillPop() async {
+    if (_selectedIndex != 0) {
+      // Not on Home → switch to Home
+      setState(() => _selectedIndex = 0);
+      return false; // cancel the default pop
+    }
+    // On Home → send app to background
+    if (Platform.isAndroid) {
+      SystemNavigator.pop();
+    } else if (Platform.isIOS) {
+      // iOS doesn't support backgrounding via SystemNavigator
+      // so we just pop (which closes the app)
+      return true;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.green[800],
-        unselectedItemColor: Colors.grey,
-        onTap: (i) => setState(() => _selectedIndex = i),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Players'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.sports_cricket), label: 'Batting Order'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings), label: 'Settings'),
-        ],
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: _pages[_selectedIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.green[800],
+          unselectedItemColor: Colors.grey,
+          onTap: (i) => setState(() => _selectedIndex = i),
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+            BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Players'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.sports_cricket), label: 'Batting Order'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.settings), label: 'Settings'),
+          ],
+        ),
       ),
     );
   }
