@@ -34,9 +34,8 @@ class PlayerProfilePage extends StatefulWidget {
 class _PlayerProfilePageState extends State<PlayerProfilePage>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
-  final double _appBarMaxHeight = 280;
+  final double _appBarMaxHeight = 350;
   final double _appBarMinHeight = kToolbarHeight + 10;
-  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -47,7 +46,6 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
   @override
   void dispose() {
     _tabController.dispose();
-    _scrollController.dispose();
     super.dispose();
   }
 
@@ -69,13 +67,12 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
       onWillPop: _onWillPop,
       child: Scaffold(
         body: NestedScrollView(
-          controller: _scrollController,
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(
               expandedHeight: _appBarMaxHeight,
               collapsedHeight: _appBarMinHeight,
               pinned: true,
-              floating: false,
+              floating: true,
               backgroundColor: colors.primary,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -83,7 +80,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
               ),
               title: AnimatedOpacity(
                 opacity: innerBoxIsScrolled ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 300),
                 child: Row(
                   children: [
                     CircleAvatar(
@@ -161,13 +158,17 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
           body: TabBarView(
             controller: _tabController,
             children: [
-              _buildProfileSection(player),
-              _statsGrid(_processRecentScores(player['scores'] ?? {})),
-              _statsGrid(_processYearScores(player['scores'] ?? {})),
-              _statsGrid(
-                  _processCareerScores(player['scores']?['career'] ?? {})),
-              _statsGrid(_processRunsScores(player['scores'] ?? {})),
-              _statsGrid(_processWicketsScores(player['scores'] ?? {})),
+              _buildTabContent(_buildProfileSection(player)),
+              _buildTabContent(_buildStatsGrid(
+                  _processRecentScores(player['scores'] ?? {}))),
+              _buildTabContent(
+                  _buildStatsGrid(_processYearScores(player['scores'] ?? {}))),
+              _buildTabContent(_buildStatsGrid(
+                  _processCareerScores(player['scores']?['career'] ?? {}))),
+              _buildTabContent(
+                  _buildStatsGrid(_processRunsScores(player['scores'] ?? {}))),
+              _buildTabContent(_buildStatsGrid(
+                  _processWicketsScores(player['scores'] ?? {}))),
             ],
           ),
         ),
@@ -175,9 +176,21 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     );
   }
 
+  Widget _buildTabContent(Widget content) {
+    return CustomScrollView(
+      slivers: [
+        SliverList(
+          delegate: SliverChildListDelegate([content]),
+        ),
+        SliverToBoxAdapter(
+          child: SizedBox(height: MediaQuery.of(context).size.height * 0.5),
+        ),
+      ],
+    );
+  }
+
   Widget _buildProfileSection(Map<String, dynamic> player) {
-    return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: Column(
         children: [
@@ -188,7 +201,6 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
           _buildProfileTile(
               'Bowling Style', player['bowlingstyle'], Icons.sports_cricket),
           _buildProfileTile('Role', player['role'], Icons.person),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.2),
         ],
       ),
     );
@@ -200,9 +212,10 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
       child: ListTile(
         leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
         title: Text(title,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600],
-                )),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: Colors.grey[600])),
         subtitle: Text(value ?? 'N/A',
             style: Theme.of(context).textTheme.titleMedium),
         contentPadding: EdgeInsets.zero,
@@ -210,8 +223,10 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
     );
   }
 
-  Widget _statsGrid(Map<String, String> stats) {
+  Widget _buildStatsGrid(Map<String, String> stats) {
     return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -245,23 +260,20 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
                 const SizedBox(width: 8),
                 Text(title,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
-                    )),
+                        color: theme.colorScheme.onSurface.withOpacity(0.7))),
               ],
             ),
             const SizedBox(height: 8),
             Text(value,
                 style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.primary,
-                )),
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary)),
           ],
         ),
       ),
     );
   }
 
-  // Data processing methods
   Map<String, String> _processRecentScores(Map<String, dynamic> scores) {
     final runs = _toNumList(scores['runs']);
     final wkts = _toNumList(scores['wickets']);
