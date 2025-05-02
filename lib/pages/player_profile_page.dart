@@ -19,6 +19,8 @@ const Map<String, IconData> statIcons = {
   'Best': Icons.sports_cricket,
   'Balls': Icons.sports_baseball,
   'Match': Icons.sports_cricket,
+  'Runs': Icons.sports_cricket,
+  'Wickets': Icons.sports_baseball,
 };
 
 class PlayerProfilePage extends StatefulWidget {
