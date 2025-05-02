@@ -328,8 +328,8 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
   Map<String, String> _processWicketsScores(Map<String, dynamic> scores) {
     final wkts = _toNumList(scores['wickets']);
     return {
-      for (var i = 0; i < wkts.length; i++)
-        'Match ${wkts.length - i}': wkts[i].toString()
+      for (var i = wkts.length - 1; i >= 0; i--)
+        'Match ${i + 1}': wkts[i].toString()
     };
   }
 
