@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 
 class ManOfTheMatchCard extends StatelessWidget {
@@ -19,7 +18,7 @@ class ManOfTheMatchCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        shadowColor: Colors.blue.withOpacity(0.2),
+        shadowColor: Colors.blue.withValues(alpha: 0.2),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
@@ -45,7 +44,7 @@ class ManOfTheMatchCard extends StatelessWidget {
                     letterSpacing: 0.5,
                     shadows: [
                       Shadow(
-                        color: Colors.blue.withOpacity(0.1),
+                        color: Colors.blue.withValues(alpha: 0.1),
                         blurRadius: 4,
                         offset: const Offset(1, 1),
                       ),
@@ -66,7 +65,7 @@ class ManOfTheMatchCard extends StatelessWidget {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.blue.withOpacity(0.1),
+                            color: Colors.blue.withValues(alpha: 0.1),
                             blurRadius: 8,
                             spreadRadius: 2,
                           )

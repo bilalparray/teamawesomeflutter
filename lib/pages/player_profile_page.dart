@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'player_data_processor.dart';
 
 const Map<String, IconData> statIcons = {
@@ -114,9 +113,9 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            colors.primary.withOpacity(0.8),
+                            colors.primary.withValues(alpha: 0.9),
                             Colors.transparent,
-                            colors.primary.withOpacity(0.6),
+                            colors.primary.withValues(alpha: 0.9),
                           ],
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
@@ -269,7 +268,8 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
                 const SizedBox(width: 8),
                 Text(title,
                     style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7))),
+                        color: theme.colorScheme.onSurface
+                            .withValues(alpha: 0.9))),
               ],
             ),
             const SizedBox(height: 8),

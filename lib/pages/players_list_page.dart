@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:teamawesomesozeith/main.dart';
 import '../services/player_service.dart';
 import '../widgets/custom_app_bar.dart';
 import 'player_profile_page.dart';
 import 'batting_order_page.dart'; // Destination for nav icon
 
 class PlayersPage extends StatelessWidget {
-  const PlayersPage({Key? key}) : super(key: key);
+  const PlayersPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +38,8 @@ class PlayersPage extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.blue.shade50.withOpacity(0.4),
-              Colors.white.withOpacity(0.9),
+              Colors.blue.shade50.withValues(alpha: 0.4),
+              Colors.white.withValues(alpha: 0.9),
             ],
           ),
         ),
@@ -152,13 +151,13 @@ class PlayerCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const PlayerCard({
-    Key? key,
+    super.key,
     required this.name,
     required this.role,
     required this.imagePath,
     required this.rank,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

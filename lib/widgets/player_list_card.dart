@@ -1,5 +1,3 @@
-// player_list_card.dart
-import 'dart:convert';
 import 'package:flutter/material.dart';
 
 class PlayerListCard extends StatelessWidget {
