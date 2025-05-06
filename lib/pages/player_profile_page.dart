@@ -2,25 +2,26 @@ import 'package:flutter/material.dart';
 import 'player_data_processor.dart';
 
 const Map<String, IconData> statIcons = {
-  'Last Runs': Icons.run_circle,
-  'Last Wkts': Icons.sports_baseball,
-  'Strike%': Icons.speed,
-  'Avg 4': Icons.trending_up,
-  'High 4': Icons.insights,
-  'Total Runs': Icons.emoji_events,
-  'Total Wkts': Icons.workspace_premium,
-  'Matches': Icons.event_available,
-  'Avg': Icons.calculate,
-  'Career Runs': Icons.history_edu,
-  'Career Wkts': Icons.history,
-  'Rank': Icons.leaderboard,
-  '50s': Icons.looks_5,
-  '100s': Icons.looks_one,
-  'Best': Icons.workspace_premium,
-  'Balls': Icons.sports_baseball,
-  'Match': Icons.sports_cricket,
-  'Runs': Icons.directions_run,
-  'Wickets': Icons.star,
+  'Last Runs': Icons.sports_cricket, // what happened most recently
+  'Last Wkts':
+      Icons.sports_baseball, // last wickets are a cricket-specific event
+  'Strike%': Icons.show_chart, // percentage → chart
+  'Avg 4': Icons.bar_chart, // average of 4s → bar chart
+  'High 4': Icons.trending_up, // highest number of 4s → trending up
+  'Total Runs': Icons.stacked_line_chart, // totals over time
+  'Total Wkts': Icons.sports_baseball, // total wickets → outlined cricket icon
+  'Matches': Icons.event, // count of match events
+  'Avg': Icons.calculate, // average → calculator
+  'Career Runs': Icons.sports_cricket, // career long history
+  'Career Wkts': Icons.sports_baseball, // career skill (school)
+  'Rank': Icons.emoji_events, // ranking
+  '50s': Icons.filter_5, // “5” styled icon
+  '100s': Icons.filter_1, // “1” styled icon (for 100)
+  'Best': Icons.emoji_events, // best performance → trophy
+  'Balls': Icons.sports_baseball, // cricket ball
+  'Match': Icons.sports_cricket, // a match is cricket
+  'Runs': Icons.sports_cricket, // running between the wickets
+  'Wickets': Icons.sports_baseball, // wicket icon
 };
 
 class PlayerProfilePage extends StatefulWidget {
@@ -205,9 +206,9 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
           _buildProfileTile('Debut',
               PlayerDataProcessor.parseDate(player['debut']), Icons.flag),
           _buildProfileTile(
-              'Batting Style', player['battingstyle'], Icons.sports_baseball),
+              'Batting Style', player['battingstyle'], Icons.sports_cricket),
           _buildProfileTile(
-              'Bowling Style', player['bowlingstyle'], Icons.sports_cricket),
+              'Bowling Style', player['bowlingstyle'], Icons.sports_baseball),
           _buildProfileTile('Role', player['role'], Icons.person),
         ],
       ),
