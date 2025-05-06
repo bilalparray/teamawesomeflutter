@@ -253,7 +253,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
 
   Widget _statCard(String title, String value) {
     final theme = Theme.of(context);
-    final icon = statIcons[title] ?? Icons.help;
+    final icon = statIcons[title] ?? Icons.sports_cricket_sharp;
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
