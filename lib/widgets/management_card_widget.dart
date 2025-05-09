@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart'; // for launchUrlString
 
 class ManagementCardWidget extends StatelessWidget {
   final String imagePath;
   final String title;
   final String role;
   final String description;
+  final String url;
 
   const ManagementCardWidget({
     super.key,
@@ -12,7 +15,21 @@ class ManagementCardWidget extends StatelessWidget {
     required this.title,
     required this.role,
     required this.description,
+    this.url = '',
   });
+
+  Future<void> _launchURL() async {
+    if (url.isEmpty) return;
+    try {
+      // Use launchUrlString for simpler handling
+      await launchUrlString(
+        url,
+        mode: LaunchMode.platformDefault, // let system choose best app
+      );
+    } catch (e) {
+      debugPrint('Could not launch "$url": $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +54,7 @@ class ManagementCardWidget extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center, // Changed to center
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Profile Image with decorative border
               Container(
@@ -52,7 +69,7 @@ class ManagementCardWidget extends StatelessWidget {
                       color: Colors.blue.withOpacity(0.1),
                       blurRadius: 8,
                       spreadRadius: 2,
-                    )
+                    ),
                   ],
                 ),
                 child: CircleAvatar(
@@ -70,9 +87,8 @@ class ManagementCardWidget extends StatelessWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center, // Added this
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Name
                     Text(
                       title,
                       style: const TextStyle(
@@ -83,8 +99,6 @@ class ManagementCardWidget extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 6),
-
-                    // Role
                     Text(
                       role.toUpperCase(),
                       style: TextStyle(
@@ -95,8 +109,6 @@ class ManagementCardWidget extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-
-                    // Description
                     Text(
                       description,
                       style: TextStyle(
@@ -107,6 +119,13 @@ class ManagementCardWidget extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
+
+              // Navigator Icon horizontally aligned at end
+              IconButton(
+                icon: const Icon(Icons.navigate_next),
+                onPressed: _launchURL,
+                tooltip: 'Open Link',
               ),
             ],
           ),

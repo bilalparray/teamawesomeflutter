@@ -10,7 +10,7 @@ class FeaturedPlayersList extends StatelessWidget {
     final players = PlayerService.players;
 
     return SizedBox(
-      height: 240,
+      height: 250,
       child: ListView.builder(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         scrollDirection: Axis.horizontal,
