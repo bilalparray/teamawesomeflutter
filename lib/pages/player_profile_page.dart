@@ -111,18 +111,7 @@ class _PlayerProfilePageState extends State<PlayerProfilePage>
                       alignment: Alignment.topCenter,
                     ),
                     Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            colors.primary.withValues(alpha: 0.9),
-                            Colors.transparent,
-                            colors.primary.withValues(alpha: 0.9),
-                          ],
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                          stops: const [0.0, 0.5, 1.0],
-                        ),
-                      ),
+                      decoration: BoxDecoration(),
                     ),
                   ],
                 ),

@@ -32,7 +32,7 @@ class ManOfTheMatchCard extends StatelessWidget {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(10),
             child: Column(
               children: [
                 Text(
@@ -113,7 +113,7 @@ class ManOfTheMatchCard extends StatelessWidget {
                             children: [
                               _buildStatBadge('Runs', runs),
                               const SizedBox(width: 16),
-                              _buildStatBadge('Wickets', wickets),
+                              _buildStatBadge('Wicketsfsdf', wickets),
                             ],
                           ),
                         ],
@@ -131,7 +131,7 @@ class ManOfTheMatchCard extends StatelessWidget {
 
   Widget _buildStatBadge(String label, String value) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.blue.shade50,
         borderRadius: BorderRadius.circular(20),
@@ -144,7 +144,7 @@ class ManOfTheMatchCard extends StatelessWidget {
               text: '$label: ',
               style: TextStyle(
                 color: Colors.blue.shade600,
-                fontSize: 14,
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -152,7 +152,7 @@ class ManOfTheMatchCard extends StatelessWidget {
               text: value,
               style: TextStyle(
                 color: Colors.blue.shade800,
-                fontSize: 15,
+                fontSize: 13,
                 fontWeight: FontWeight.bold,
               ),
             ),
