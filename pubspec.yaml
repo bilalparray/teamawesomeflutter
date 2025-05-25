@@ -35,6 +35,9 @@ flutter:
     - assets/feature/banner.png
     - assets/players/profile.png
     - assets/players/batsman.png
+    - assets/players/umer.jpg
+    - assets/players/owais.jpg
+    - assets/players/ehsaan.jpg
     - assets/vectors/
 
 flutter_launcher_icons:

@@ -73,7 +73,7 @@ class ManagementCardWidget extends StatelessWidget {
                 ),
                 child: CircleAvatar(
                   radius: 40,
-                  backgroundImage: NetworkImage(imagePath),
+                  backgroundImage: AssetImage(imagePath),
                   backgroundColor: Colors.grey.shade200,
                   child: imagePath.isEmpty
                       ? const Icon(Icons.person, size: 40, color: Colors.blue)

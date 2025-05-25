@@ -116,9 +116,8 @@ class _HomePageState extends State<HomePage> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: ManagementCardWidget(
-              imagePath:
-                  'https://media.cricheroes.in/user_profile/1679455036216_FZVApXPFT0zj.jpg?width=1920&quality=75&format=auto',
-              title: 'Umer',
+              imagePath: 'assets/players/umer.jpg',
+              title: 'Umer Raja',
               role: 'Coach',
               description: 'I guide and train the team.',
               url:
@@ -127,8 +126,7 @@ class _HomePageState extends State<HomePage> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: ManagementCardWidget(
-            imagePath:
-                'https://media.cricheroes.in/user_profile/1644751225184_kGI4TIBJkvxS.jpg?width=1920&quality=75&format=auto',
+            imagePath: 'assets/players/ehsaan.jpg',
             title: 'Ahsaan ul Haq',
             role: 'Captain',
             description: 'I lead by example on the field.',
@@ -137,9 +135,8 @@ class _HomePageState extends State<HomePage> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: ManagementCardWidget(
-            imagePath:
-                'https://media.cricheroes.in/user_profile/1655743891306_TpqUnn0bpI0K.jpg?width=1920&quality=75&format=auto',
-            title: 'Owais',
+            imagePath: 'assets/players/owais.jpg',
+            title: 'Owais Farooq',
             role: 'Manager',
             description: 'I handle the team’s overall planning.',
           ),
