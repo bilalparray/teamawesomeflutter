@@ -25,8 +25,8 @@ class TopperCard extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Colors.white,
-              Colors.blue.shade50,
+              const Color.fromARGB(255, 32, 109, 210),
+              const Color.fromARGB(255, 32, 109, 210),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -58,6 +58,7 @@ class TopperCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                   if (runsScored != null) ...[
@@ -66,7 +67,7 @@ class TopperCard extends StatelessWidget {
                       'Runs: $runsScored',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.green.shade700,
+                        color: const Color.fromARGB(255, 225, 226, 225),
                       ),
                     ),
                   ],
@@ -77,7 +78,7 @@ class TopperCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 13,
                         fontStyle: FontStyle.italic,
-                        color: Colors.green.shade700,
+                        color: const Color.fromARGB(255, 225, 226, 225),
                       ),
                     ),
                   ],

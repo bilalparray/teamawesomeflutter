@@ -47,6 +47,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     if (errorMessage.isNotEmpty) {
       return Scaffold(
         appBar: CustomAppBar(title: const Text('Team Awesome Sozeith')),
@@ -55,17 +56,23 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Scaffold(
-      appBar: CustomAppBar(
-        title: const Text('Team Awesome Sozeith'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => SettingsPage()),
-            ),
-          ),
-        ],
+      appBar: AppBar(
+        backgroundColor: theme.primaryColor,
+        title: const Text(
+          'Team Awesome Sozeith',
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.settings_outlined),
+        //     color: Colors.white,
+        //     onPressed: () => Navigator.push(
+        //       context,
+        //       MaterialPageRoute(builder: (_) => SettingsPage()),
+        //     ),
+        //   ),
+        // ],
       ),
       body: isLoading ? const HomeSkeletonLoader() : _buildPlayerContent(),
     );
@@ -77,7 +84,12 @@ class _HomePageState extends State<HomePage> {
     return ListView(
       padding: const EdgeInsets.only(bottom: 80),
       children: [
-        const HeroHeader(),
+        const HeroHeader(
+          teamName: 'Team Awesome Sozeith',
+          description:
+              'A passionate local cricket team from Sozeith, known for teamwork and energy!',
+        ),
+
         if (motm != null) ManOfTheMatchCard(player: motm),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),

@@ -26,8 +26,8 @@ class ManOfTheMatchCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.white,
-                Colors.blue.shade50,
+                const Color.fromARGB(255, 255, 255, 255),
+                Color.fromARGB(255, 255, 255, 255)
               ],
             ),
           ),
@@ -113,7 +113,7 @@ class ManOfTheMatchCard extends StatelessWidget {
                             children: [
                               _buildStatBadge('Runs', runs),
                               const SizedBox(width: 16),
-                              _buildStatBadge('Wicketsfsdf', wickets),
+                              _buildStatBadge('Wickets', wickets),
                             ],
                           ),
                         ],

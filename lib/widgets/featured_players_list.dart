@@ -81,13 +81,14 @@ class PlayerCard extends StatelessWidget {
           shadowColor: Colors.blue.withOpacity(0.2),
           child: Container(
             decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 32, 109, 210),
               borderRadius: BorderRadius.circular(20),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white,
-                  Colors.blue.shade50,
+                  const Color.fromARGB(255, 32, 109, 210),
+                  const Color.fromARGB(255, 32, 109, 210),
                 ],
               ),
             ),
@@ -131,7 +132,7 @@ class PlayerCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.blue.shade800,
+                            color: const Color.fromARGB(255, 254, 254, 254),
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
@@ -144,7 +145,7 @@ class PlayerCard extends StatelessWidget {
                           child: Text(
                             rank,
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: Color.fromARGB(255, 2, 72, 248),
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),
@@ -159,7 +160,7 @@ class PlayerCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
-                      color: Colors.blueGrey,
+                      color: Color.fromARGB(255, 255, 255, 255),
                       letterSpacing: 0.5,
                     ),
                     textAlign: TextAlign.center,
@@ -173,7 +174,7 @@ class PlayerCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: Colors.blue.shade600,
+                      color: const Color.fromARGB(255, 219, 216, 216),
                       letterSpacing: 0.8,
                     ),
                   ),
