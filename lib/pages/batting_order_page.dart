@@ -63,9 +63,15 @@ class _BattingOrderPageState extends State<BattingOrderPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: const CustomAppBar(title: Text('Batting Order')),
+      appBar: AppBar(
+        title: Text('Batting Order'),
+        backgroundColor: theme.primaryColor,
+        foregroundColor: Colors.white,
+        centerTitle: true,
+      ),
       body: RefreshIndicator(
         color: Theme.of(context).primaryColor,
         onRefresh: _onRefresh,

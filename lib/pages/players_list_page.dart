@@ -9,11 +9,15 @@ class PlayersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: CustomAppBar(
+        child: AppBar(
+          centerTitle: true,
           title: const Text('Players'),
+          backgroundColor: theme.primaryColor,
+          foregroundColor: Colors.white,
           // Pass actions through a row
           actions: [
             IconButton(
