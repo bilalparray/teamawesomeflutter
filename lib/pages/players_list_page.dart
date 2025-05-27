@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/player_service.dart';
-import '../widgets/custom_app_bar.dart';
 import 'player_profile_page.dart';
 import 'batting_order_page.dart'; // Destination for nav icon
 

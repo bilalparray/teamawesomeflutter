@@ -8,7 +8,6 @@ import '../widgets/man_of_the_match_card.dart';
 import '../widgets/featured_players_list.dart';
 import '../widgets/home_skeleton_loader.dart';
 import '../widgets/management_card_widget.dart'; // Import your ManagementCardWidget
-import 'settings_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

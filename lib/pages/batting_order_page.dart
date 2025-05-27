@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamawesomesozeith/main.dart';
 import 'package:teamawesomesozeith/pages/player_profile_page.dart';
-import 'package:teamawesomesozeith/widgets/custom_app_bar.dart';
 import '../services/batting_order_service.dart';
 import '../services/player_service.dart';
 
