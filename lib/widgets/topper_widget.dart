@@ -7,12 +7,12 @@ class TopperCard extends StatelessWidget {
   final int? wicket;
 
   const TopperCard({
-    super.key,
+    Key? key,
     required this.imagePath,
     required this.playerName,
     this.runsScored,
     this.wicket,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,32 +23,49 @@ class TopperCard extends StatelessWidget {
       ),
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [
-              const Color.fromARGB(255, 32, 109, 210),
-              const Color.fromARGB(255, 32, 109, 210),
+              Color.fromARGB(255, 32, 109, 210),
+              Color.fromARGB(255, 32, 109, 210),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
+          // border: Border.all(
+          //   color: Colors.blue.shade100,
+          //   width: 3,
+          // ),
           borderRadius: BorderRadius.circular(16),
         ),
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            // Profile Image
-            CircleAvatar(
-              radius: 30,
-              backgroundImage:
-                  imagePath.isNotEmpty ? NetworkImage(imagePath) : null,
-              backgroundColor: Colors.grey.shade200,
-              child: imagePath.isEmpty
-                  ? const Icon(Icons.person, size: 30, color: Colors.blue)
-                  : null,
+            // Profile Image with Border
+            Container(
+              width: 64,
+              height: 64,
+              // padding: const EdgeInsets.all(3), // Space for the border
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.blue.shade100,
+                  width: 3,
+                ),
+              ),
+              child: CircleAvatar(
+                radius: 28,
+                backgroundImage:
+                    imagePath.isNotEmpty ? NetworkImage(imagePath) : null,
+                backgroundColor: Colors.grey.shade200,
+                child: imagePath.isEmpty
+                    ? const Icon(Icons.person, size: 30, color: Colors.blue)
+                    : null,
+              ),
             ),
+
             const SizedBox(width: 16),
 
-            // Name, Runs, and Wicket Info
+            // Player info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,9 +82,9 @@ class TopperCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       'Runs: $runsScored',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 14,
-                        color: const Color.fromARGB(255, 225, 226, 225),
+                        color: Color.fromARGB(255, 225, 226, 225),
                       ),
                     ),
                   ],
@@ -75,10 +92,10 @@ class TopperCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       'Wickets: $wicket',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 13,
                         fontStyle: FontStyle.italic,
-                        color: const Color.fromARGB(255, 225, 226, 225),
+                        color: Color.fromARGB(255, 225, 226, 225),
                       ),
                     ),
                   ],
