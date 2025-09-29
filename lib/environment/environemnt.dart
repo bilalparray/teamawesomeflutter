@@ -7,7 +7,7 @@ class Environment {
   static const String secondaryColor = '#FFC107';
   static const String backgroundColor = '#F5F5F5';
   static const String textColor = '#333333';
-  static const String version = '0.0.6';
+  static const String version = '1.0.2';
   static const String developer = 'Bilal Ahmad Parray';
 
   // static const String baseUrl = 'https://teamawesomebackend-sgsc.onrender.com';

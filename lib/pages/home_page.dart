@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teamawesomesozeith/main.dart';
+import 'package:teamawesomesozeith/services/match_service.dart';
+import 'package:teamawesomesozeith/widgets/match_card.dart';
 import 'package:teamawesomesozeith/widgets/topper_widget.dart';
 import '../services/player_service.dart';
 import '../widgets/custom_app_bar.dart';
@@ -19,7 +21,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool isLoading = true;
   String errorMessage = '';
-
   @override
   void initState() {
     super.initState();
@@ -30,6 +31,7 @@ class _HomePageState extends State<HomePage> {
     setState(() => isLoading = true);
     try {
       await PlayerService.fetchPlayers();
+      await MatchService.fetchMatches();
       setState(() => isLoading = false);
     } catch (e) {
       setState(() {
@@ -62,16 +64,6 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.settings_outlined),
-        //     color: Colors.white,
-        //     onPressed: () => Navigator.push(
-        //       context,
-        //       MaterialPageRoute(builder: (_) => SettingsPage()),
-        //     ),
-        //   ),
-        // ],
       ),
       body: isLoading ? const HomeSkeletonLoader() : _buildPlayerContent(),
     );
@@ -198,6 +190,12 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: _buildTopWicketTaker(),
         ),
+
+        SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: _buildMatchDetails(),
+        ),
       ],
     );
   }
@@ -270,6 +268,70 @@ class _HomePageState extends State<HomePage> {
       playerName: topPlayer['name'] ?? 'Unknown',
       runsScored: null,
       wicket: topWickets,
+    );
+  }
+
+  // Required imports (place at top of your file where you paste this)
+// import '../services/match_service.dart';
+// import '../widgets/match_card.dart';
+
+  Widget _buildMatchDetails() {
+    final matches = MatchService.matches;
+
+    if (matches.isEmpty) {
+      return const Text('No matches found');
+    }
+
+    // Sort by date (upcoming first). Null dates go to the end.
+    final sorted = List.from(matches);
+    sorted.sort((a, b) {
+      final ad = a.date;
+      final bd = b.date;
+      if (ad == null && bd == null) return 0;
+      if (ad == null) return 1;
+      if (bd == null) return -1;
+      return ad.compareTo(bd);
+    });
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: List.generate(sorted.length, (index) {
+        final m = sorted[index];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Small index/badge + status row (optional — remove if you don't want it)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Row(
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text('#${index + 1}'),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      (m.status ?? '').toString().toUpperCase(),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // The reusable MatchCard (expects a MatchModel)
+            MatchCard(
+              match: m,
+            ),
+          ],
+        );
+      }),
     );
   }
 }
