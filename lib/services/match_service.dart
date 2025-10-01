@@ -14,7 +14,6 @@ class MatchService {
 
     final response =
         await http.get(Uri.parse('${Environment.baseUrl}/api/nextmatch'));
-    print(response.body);
 
     if (response.statusCode != 200) {
       throw Exception('Failed to load matches: ${response.statusCode}');
