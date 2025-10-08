@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:teamawesomesozeith/pages/batting_order_page.dart';
+import 'package:teamawesomesozeith/pages/stats_leaderboard.dart';
 import 'pages/home_page.dart';
 import 'pages/players_list_page.dart';
 import 'pages/settings_page.dart';
@@ -98,6 +99,7 @@ class _MainPageState extends State<MainPage> {
       ApiWrapper(child: const HomePage()),
       const PlayersPage(),
       const BattingOrderPage(),
+      const StatsLeaderboardPage(),
       const SettingsPage(),
     ];
   }
@@ -135,6 +137,8 @@ class _MainPageState extends State<MainPage> {
             BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Players'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.sports_cricket), label: 'Batting Order'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.leaderboard), label: 'Stats'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.settings), label: 'Settings'),
           ],
