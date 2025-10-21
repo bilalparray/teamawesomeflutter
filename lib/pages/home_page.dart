@@ -282,15 +282,15 @@ class _HomePageState extends State<HomePage> {
       return const Text('No matches found');
     }
 
-    // Sort by date (upcoming first). Null dates go to the end.
+    // Sort by date (newest first = LIFO). Null dates go to the end.
     final sorted = List.from(matches);
     sorted.sort((a, b) {
       final ad = a.date;
       final bd = b.date;
       if (ad == null && bd == null) return 0;
-      if (ad == null) return 1;
-      if (bd == null) return -1;
-      return ad.compareTo(bd);
+      if (ad == null) return 1; // put nulls at the end
+      if (bd == null) return -1; // put nulls at the end
+      return bd.compareTo(ad); // reversed: newest first (LIFO)
     });
 
     return Column(
