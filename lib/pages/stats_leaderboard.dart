@@ -22,7 +22,7 @@ class _StatsLeaderboardPageState extends State<StatsLeaderboardPage> {
   // Change this to your server address (include port if needed)
   String serverUrl = Environment.baseUrl;
 
-  final List<String> metrics = ['50s', '100s', 'wickets'];
+  final List<String> metrics = ['50s', '100s', 'wickets', 'runs'];
   final List<String> scopes = ['career', 'year'];
 
   String selectedMetric = '50s';
