@@ -32,26 +32,28 @@ class ManagementCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 8,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      shadowColor: Colors.blue.withOpacity(0.2),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white,
-              Colors.blue.shade50,
-            ],
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        color: colorScheme.surface,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 8),
           ),
+        ],
+        border: Border.all(
+          color: colorScheme.outlineVariant.withOpacity(0.5),
         ),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: _launchURL,
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -60,27 +62,31 @@ class ManagementCardWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.blue.shade100,
+                    color: colorScheme.primary.withOpacity(0.7),
                     width: 3,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.blue.withOpacity(0.1),
-                      blurRadius: 8,
-                      spreadRadius: 2,
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 12,
+                      offset: const Offset(0, 8),
                     ),
                   ],
                 ),
                 child: CircleAvatar(
-                  radius: 40,
+                  radius: 32,
                   backgroundImage: AssetImage(imagePath),
                   backgroundColor: Colors.grey.shade200,
                   child: imagePath.isEmpty
-                      ? const Icon(Icons.person, size: 40, color: Colors.blue)
+                      ? Icon(
+                          Icons.person_rounded,
+                          size: 34,
+                          color: colorScheme.primary,
+                        )
                       : null,
                 ),
               ),
-              const SizedBox(width: 20),
+              const SizedBox(width: 14),
 
               // Information Section
               Expanded(
@@ -90,42 +96,66 @@ class ManagementCardWidget extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.blueGrey,
-                        letterSpacing: 0.5,
-                      ),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 4),
                     Text(
                       role.toUpperCase(),
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.blue.shade600,
-                        letterSpacing: 0.8,
-                      ),
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.9,
+                            color: colorScheme.primary,
+                          ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
                     Text(
                       description,
-                      style: TextStyle(
-                        fontSize: 15,
-                        height: 1.4,
-                        color: Colors.grey.shade700,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colors.grey[700],
+                            height: 1.4,
+                          ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
 
               // Navigator Icon horizontally aligned at end
-              IconButton(
-                icon: const Icon(Icons.navigate_next),
-                onPressed: _launchURL,
-                tooltip: 'Open Link',
-              ),
+              if (url.isNotEmpty) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.open_in_new_rounded,
+                        size: 16,
+                        color: colorScheme.primary,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Profile',
+                        style:
+                            Theme.of(context).textTheme.labelSmall?.copyWith(
+                                  color: colorScheme.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ],
           ),
         ),

@@ -69,9 +69,9 @@ class _PlayersContentState extends State<_PlayersContent> {
     _loadFuture = _loadPlayers();
   }
 
-  Future<void> _loadPlayers() async {
+  Future<void> _loadPlayers({bool forceRefresh = false}) async {
     try {
-      await PlayerService.fetchPlayers();
+      await PlayerService.fetchPlayers(forceRefresh: forceRefresh);
       if (PlayerService.players.isEmpty) _showError();
     } catch (_) {
       _showError();
@@ -84,7 +84,7 @@ class _PlayersContentState extends State<_PlayersContent> {
     if (mounted) {
       setState(() {
         _hasError = false;
-        _loadFuture = _loadPlayers();
+        _loadFuture = _loadPlayers(forceRefresh: true);
       });
     }
   }

@@ -9,8 +9,8 @@ class MatchService {
 
   static List<MatchModel> get matches => List.unmodifiable(_matches);
 
-  static Future<void> fetchMatches() async {
-    if (_matches.isNotEmpty) return; // already fetched
+  static Future<void> fetchMatches({bool forceRefresh = false}) async {
+    if (_matches.isNotEmpty && !forceRefresh) return; // already fetched
 
     final response =
         await http.get(Uri.parse('${Environment.baseUrl}/api/nextmatch'));

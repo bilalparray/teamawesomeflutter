@@ -9,8 +9,10 @@ class PlayerService {
   static dynamic _manOfTheMatch;
 
   /// Fetches from API only if we haven't already in this app session.
-  static Future<void> fetchPlayers() async {
-    if (_players.isNotEmpty) return; // <<–– already fetched this session
+  static Future<void> fetchPlayers({bool forceRefresh = false}) async {
+    if (_players.isNotEmpty && !forceRefresh) {
+      return; // already fetched and no explicit refresh requested
+    }
 
     final response = await http.get(
       Uri.parse('${Environment.baseUrl}/api/players'),

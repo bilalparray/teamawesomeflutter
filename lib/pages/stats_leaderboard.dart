@@ -167,40 +167,148 @@ class _StatsLeaderboardPageState extends State<StatsLeaderboardPage> {
   }
 
   Widget _buildList() {
-    if (loading) return const Center(child: CircularProgressIndicator());
-    if (error != null)
+    if (loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (error != null) {
       return Center(
-          child: Text(error!, style: const TextStyle(color: Colors.red)));
-    if (players.isEmpty) return const Center(child: Text('No players found'));
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.error_outline,
+                  size: 40, color: Theme.of(context).colorScheme.error),
+              const SizedBox(height: 12),
+              Text(
+                'Something went wrong',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                error!,
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(color: Colors.grey[700]),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: fetchLeaderboard,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Try again'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    if (players.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.leaderboard_outlined,
+                  size: 40,
+                  color: Theme.of(context).colorScheme.primaryContainer),
+              const SizedBox(height: 12),
+              Text(
+                'No players yet',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Fetch the latest stats to see the leaderboard for your team.',
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return RefreshIndicator(
       onRefresh: _onRefresh,
       child: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         itemCount: players.length,
         itemBuilder: (context, index) {
           final p = players[index];
           return Card(
-            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-            elevation: 3,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            child: ListTile(
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              leading: _buildAvatar(p),
-              title: Text(p.name ?? 'Unknown',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w600, fontSize: 16)),
-              subtitle:
-                  Text(p.role ?? '', style: const TextStyle(fontSize: 14)),
-              trailing: Chip(
-                label: Text('${p.count}',
-                    style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold)),
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Row(
+                children: [
+                  Text(
+                    '#${index + 1}',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                  ),
+                  const SizedBox(width: 12),
+                  _buildAvatar(p),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          p.name ?? 'Unknown',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          p.role ?? '',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Colors.grey[700],
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          '${p.count}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        selectedMetric.toUpperCase(),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.grey[600],
+                              letterSpacing: 0.6,
+                            ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           );
@@ -244,17 +352,28 @@ class _StatsLeaderboardPageState extends State<StatsLeaderboardPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Stats Leaderboard'),
-        elevation: 0,
-        centerTitle: true,
       ),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
             return Column(
               children: [
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'See who is leading your team across key stats.',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.grey[700],
+                          ),
+                    ),
+                  ),
+                ),
                 _buildControls(constraints.maxWidth),
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
                 Expanded(child: _buildList()),
               ],
             );

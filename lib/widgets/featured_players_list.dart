@@ -69,117 +69,118 @@ class PlayerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: onTap,
-        child: Card(
-          elevation: 8,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          shadowColor: Colors.blue.withOpacity(0.2),
-          child: Container(
-            decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 32, 109, 210),
-              borderRadius: BorderRadius.circular(20),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  const Color.fromARGB(255, 32, 109, 210),
-                  const Color.fromARGB(255, 32, 109, 210),
-                ],
-              ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                colorScheme.primary,
+                colorScheme.secondary.withOpacity(0.9),
+              ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // Profile Image with Rank Chip
-                  Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.blue.shade100,
-                            width: 3,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.blue.withOpacity(0.1),
-                              blurRadius: 8,
-                              spreadRadius: 2,
-                            )
-                          ],
-                        ),
-                        child: CircleAvatar(
-                          radius: 50,
-                          backgroundImage: _getImageProvider(imagePath),
-                          backgroundColor: Colors.grey.shade200,
-                          child: imagePath.isEmpty
-                              ? Icon(Icons.person,
-                                  size: 50, color: Colors.blue.shade300)
-                              : null,
-                        ),
-                      ),
-                      if (rank.isNotEmpty)
-                        Container(
+            boxShadow: [
+              BoxShadow(
+                color: colorScheme.primary.withOpacity(0.25),
+                blurRadius: 18,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Top row: rank chip
+                Align(
+                  alignment: Alignment.topRight,
+                  child: rank.isNotEmpty
+                      ? Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
+                              horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 254, 254, 254),
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.blue.withOpacity(0.2),
-                                blurRadius: 4,
-                                spreadRadius: 1,
-                              )
-                            ],
+                            color: colorScheme.onPrimary.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(999),
+                            border: Border.all(
+                              color: colorScheme.onPrimary.withOpacity(0.4),
+                            ),
                           ),
                           child: Text(
                             rank,
-                            style: const TextStyle(
-                              color: Color.fromARGB(255, 2, 72, 248),
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                            style: TextStyle(
+                              color: colorScheme.onPrimary,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
-                        ),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+                const SizedBox(height: 8),
+                // Profile Image
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: colorScheme.onPrimary.withOpacity(0.4),
+                      width: 3,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.18),
+                        blurRadius: 12,
+                        offset: const Offset(0, 8),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  // Player Name
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      color: Color.fromARGB(255, 255, 255, 255),
-                      letterSpacing: 0.5,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  child: CircleAvatar(
+                    radius: 42,
+                    backgroundImage: _getImageProvider(imagePath),
+                    backgroundColor: Colors.grey.shade200,
+                    child: imagePath.isEmpty
+                        ? Icon(
+                            Icons.person_rounded,
+                            size: 40,
+                            color: colorScheme.primary,
+                          )
+                        : null,
                   ),
-                  const SizedBox(height: 6),
-                  // Role
-                  Text(
-                    role.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: const Color.fromARGB(255, 219, 216, 216),
-                      letterSpacing: 0.8,
-                    ),
+                ),
+                const SizedBox(height: 14),
+                // Player Name
+                Text(
+                  name,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: colorScheme.onPrimary,
+                    letterSpacing: 0.4,
                   ),
-                ],
-              ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                // Role
+                Text(
+                  role.toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onPrimary.withOpacity(0.78),
+                    letterSpacing: 0.9,
+                  ),
+                ),
+              ],
             ),
           ),
         ),

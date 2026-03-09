@@ -5,11 +5,11 @@ import 'package:teamawesomesozeith/widgets/match_card.dart';
 import 'package:teamawesomesozeith/widgets/topper_widget.dart';
 import '../services/player_service.dart';
 import '../widgets/custom_app_bar.dart';
-import '../widgets/hero_header.dart';
 import '../widgets/man_of_the_match_card.dart';
 import '../widgets/featured_players_list.dart';
 import '../widgets/home_skeleton_loader.dart';
 import '../widgets/management_card_widget.dart'; // Import your ManagementCardWidget
+import '../widgets/section_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -30,8 +30,8 @@ class _HomePageState extends State<HomePage> {
   Future<void> _loadData() async {
     setState(() => isLoading = true);
     try {
-      await PlayerService.fetchPlayers();
-      await MatchService.fetchMatches();
+      await PlayerService.fetchPlayers(forceRefresh: true);
+      await MatchService.fetchMatches(forceRefresh: true);
       setState(() => isLoading = false);
     } catch (e) {
       setState(() {
@@ -48,24 +48,59 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     if (errorMessage.isNotEmpty) {
       return Scaffold(
-        appBar: CustomAppBar(title: const Text('Team Awesome Sozeith')),
-        body: Center(child: Text(errorMessage)),
+        appBar: AppBar(
+          title: const Text('Team Awesome Sozeith'),
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.error_outline,
+                    size: 40,
+                    color: Theme.of(context).colorScheme.error),
+                const SizedBox(height: 12),
+                Text(
+                  'Something went wrong',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  errorMessage,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(color: Colors.grey[700]),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  onPressed: _loadData,
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Retry'),
+                ),
+              ],
+            ),
+          ),
+        ),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: theme.primaryColor,
-        title: const Text(
-          'Team Awesome Sozeith',
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
+        title: const Text('Team Awesome Sozeith'),
       ),
-      body: isLoading ? const HomeSkeletonLoader() : _buildPlayerContent(),
+      body: isLoading
+          ? const HomeSkeletonLoader()
+          : RefreshIndicator(
+              onRefresh: _loadData,
+              child: _buildPlayerContent(),
+            ),
     );
   }
 
@@ -73,127 +108,107 @@ class _HomePageState extends State<HomePage> {
     final motm = PlayerService.manOfTheMatch;
 
     return ListView(
-      padding: const EdgeInsets.only(bottom: 80),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 80),
       children: [
-        const HeroHeader(
-          teamName: 'Team Awesome Sozeith',
-          description:
-              'A passionate local cricket team from Sozeith, known for teamwork and energy!',
+        SectionCard(
+          leading: CircleAvatar(
+            radius: 20,
+            backgroundColor:
+                Theme.of(context).colorScheme.primary.withOpacity(0.1),
+            child: Icon(
+              Icons.shield_moon_rounded,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+          title: 'Team Awesome Sozeith',
+          subtitle:
+              'A passionate local cricket team from Sozeith, known for teamwork and energy.',
         ),
-
-        if (motm != null) ManOfTheMatchCard(player: motm),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          child: Row(
-            children: [
-              const Icon(Icons.groups,
-                  color: Color.fromARGB(255, 13, 165, 170)),
-              Text(
-                ' Featured Players',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 13, 165, 170),
-                    ),
+        if (motm != null) ...[
+          const SizedBox(height: 12),
+          SectionCard(
+            leading: Icon(
+              Icons.emoji_events_rounded,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            title: 'Man of the Match',
+            subtitle: 'Latest standout performance for the team.',
+            child: ManOfTheMatchCard(player: motm),
+          ),
+        ],
+        const SizedBox(height: 12),
+        SectionCard(
+          leading: Icon(
+            Icons.groups_rounded,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          title: 'Featured Players',
+          subtitle: 'Key players making an impact this season.',
+          child: const FeaturedPlayersList(),
+        ),
+        const SizedBox(height: 12),
+        SectionCard(
+          leading: Icon(
+            Icons.manage_accounts_rounded,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          title: 'Team Management',
+          subtitle: 'Leaders guiding and supporting the squad.',
+          child: Column(
+            children: const [
+              ManagementCardWidget(
+                imagePath: 'assets/players/umer.jpg',
+                title: 'Umer Raja',
+                role: 'Coach',
+                description: 'I guide and train the team.',
+                url:
+                    'https://cricheroes.com/player-profile/5250770/umer-raja/matches',
+              ),
+              SizedBox(height: 12),
+              ManagementCardWidget(
+                imagePath: 'assets/players/ehsaan.jpg',
+                title: 'Ahsaan ul Haq',
+                role: 'Captain',
+                description: 'I lead by example on the field.',
+              ),
+              SizedBox(height: 12),
+              ManagementCardWidget(
+                imagePath: 'assets/players/owais.jpg',
+                title: 'Owais Farooq',
+                role: 'Manager',
+                description: 'I handle the team’s overall planning.',
               ),
             ],
           ),
         ),
-        const FeaturedPlayersList(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          child: Row(
-            children: [
-              const Icon(Icons.groups,
-                  color: Color.fromARGB(255, 13, 165, 170)),
-              Text(
-                ' Management',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 13, 165, 170),
-                    ),
-              ),
-            ],
+        const SizedBox(height: 12),
+        SectionCard(
+          leading: Icon(
+            Icons.sports_cricket_rounded,
+            color: Theme.of(context).colorScheme.primary,
           ),
-        ),
-        // Example usage of the ManagementCardWidget
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: ManagementCardWidget(
-              imagePath: 'assets/players/umer.jpg',
-              title: 'Umer Raja',
-              role: 'Coach',
-              description: 'I guide and train the team.',
-              url:
-                  'https://cricheroes.com/player-profile/5250770/umer-raja/matches'),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: ManagementCardWidget(
-            imagePath: 'assets/players/ehsaan.jpg',
-            title: 'Ahsaan ul Haq',
-            role: 'Captain',
-            description: 'I lead by example on the field.',
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: ManagementCardWidget(
-            imagePath: 'assets/players/owais.jpg',
-            title: 'Owais Farooq',
-            role: 'Manager',
-            description: 'I handle the team’s overall planning.',
-          ),
-        ),
-
-        SizedBox(height: 6),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          child: Row(
-            children: [
-              const Icon(Icons.sports_cricket,
-                  color: Color.fromARGB(255, 13, 165, 170)),
-              Text(
-                ' Top Run Scorer (${DateTime.now().year})',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 13, 165, 170),
-                    ),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: 20),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          title: 'Top Run Scorer (${DateTime.now().year})',
+          subtitle: 'Most total runs scored across recorded matches.',
           child: _buildTopScorer(),
         ),
-        SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          child: Row(
-            children: [
-              const Icon(Icons.sports_baseball,
-                  color: Color.fromARGB(255, 13, 165, 170)),
-              Text(
-                ' Top Wicket Taker (${DateTime.now().year})',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 13, 165, 170),
-                    ),
-              ),
-            ],
+        const SizedBox(height: 12),
+        SectionCard(
+          leading: Icon(
+            Icons.sports_baseball_rounded,
+            color: Theme.of(context).colorScheme.primary,
           ),
-        ),
-
-        SizedBox(height: 20),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          title: 'Top Wicket Taker (${DateTime.now().year})',
+          subtitle: 'Highest wicket taker with the ball.',
           child: _buildTopWicketTaker(),
         ),
-
-        SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+        const SizedBox(height: 12),
+        SectionCard(
+          leading: Icon(
+            Icons.calendar_month_rounded,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          title: 'Recent Matches',
+          subtitle: 'Latest fixtures and results for the team.',
           child: _buildMatchDetails(),
         ),
       ],

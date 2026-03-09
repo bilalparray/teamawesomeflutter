@@ -25,13 +25,68 @@ class CricketTeamApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: const Color(0xFF0BA37F),
+      brightness: Brightness.light,
+    );
+
     return MaterialApp(
       title: 'Team Awesome Sozeith',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        colorScheme: colorScheme,
+        scaffoldBackgroundColor: colorScheme.surface,
+        useMaterial3: true,
         textTheme: GoogleFonts.poppinsTextTheme(),
-        primarySwatch: Colors.green,
-        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: AppBarTheme(
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
+          elevation: 0,
+          centerTitle: true,
+          titleTextStyle: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: colorScheme.onPrimary,
+          ),
+        ),
+        cardTheme: CardThemeData(
+          color: colorScheme.surface,
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: colorScheme.primary,
+            foregroundColor: colorScheme.onPrimary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          ),
+        ),
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: colorScheme.surface,
+          selectedItemColor: colorScheme.primary,
+          unselectedItemColor: colorScheme.onSurfaceVariant,
+          type: BottomNavigationBarType.fixed,
+          showUnselectedLabels: true,
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: colorScheme.surfaceVariant,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        ),
+      ).copyWith(
+        primaryColor: colorScheme.primary,
       ),
       home: isFirstTime ? const OnboardingPage() : const ConnectivityWrapper(),
     );
