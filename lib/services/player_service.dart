@@ -8,6 +8,14 @@ class PlayerService {
   static List<dynamic> _players = [];
   static dynamic _manOfTheMatch;
 
+  /// JSON from Mongo may use int or String for score entries (post-migration).
+  static int _coerceInt(dynamic v) {
+    if (v == null) return 0;
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    return int.tryParse(v.toString()) ?? 0;
+  }
+
   /// Fetches from API only if we haven't already in this app session.
   static Future<void> fetchPlayers({bool forceRefresh = false}) async {
     if (_players.isNotEmpty && !forceRefresh) {
@@ -22,7 +30,13 @@ class PlayerService {
       throw Exception('Failed to load players: ${response.statusCode}');
     }
 
-    _players = json.decode(response.body);
+    final decoded = json.decode(response.body);
+    if (decoded is! List) {
+      throw Exception(
+        'Failed to load players: expected JSON array, got ${decoded.runtimeType}',
+      );
+    }
+    _players = decoded;
     _calculateManOfTheMatch();
   }
 
@@ -33,15 +47,18 @@ class PlayerService {
     int highestScore = 0;
 
     for (var p in _players) {
+      if (p is! Map) continue;
       final scores = p['scores'];
-      if (scores == null) continue;
+      if (scores is! Map) continue;
 
       int runs = 0, wickets = 0;
-      if (scores['runs']?.isNotEmpty == true) {
-        runs = int.tryParse(scores['runs'].last) ?? 0;
+      final runsList = scores['runs'];
+      if (runsList is List && runsList.isNotEmpty) {
+        runs = _coerceInt(runsList.last);
       }
-      if (scores['wickets']?.isNotEmpty == true) {
-        wickets = int.tryParse(scores['wickets'].last) ?? 0;
+      final wktsList = scores['wickets'];
+      if (wktsList is List && wktsList.isNotEmpty) {
+        wickets = _coerceInt(wktsList.last);
       }
       final total = runs + wickets * 10;
       if (total > highestScore) {

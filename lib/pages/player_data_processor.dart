@@ -74,9 +74,20 @@ class PlayerDataProcessor {
     };
   }
 
-  static List<num> _toNumList(dynamic data) => data is List
-      ? data.whereType<String>().map((s) => num.tryParse(s) ?? 0).toList()
-      : <num>[];
+  static List<num> _toNumList(dynamic data) {
+    if (data is! List) return <num>[];
+    final out = <num>[];
+    for (final e in data) {
+      if (e is num) {
+        out.add(e);
+      } else if (e is String) {
+        out.add(num.tryParse(e) ?? 0);
+      } else {
+        out.add(num.tryParse(e?.toString() ?? '') ?? 0);
+      }
+    }
+    return out;
+  }
 
   static String _sum(List<num> v) =>
       v.isEmpty ? '0' : v.fold<num>(0, (a, b) => a + b).toString();

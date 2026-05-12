@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:teamawesomesozeith/environment/environemnt.dart';
 import 'package:teamawesomesozeith/pages/batting_order_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:teamawesomesozeith/pages/stats_leaderboard.dart';
 import 'pages/home_page.dart';
 import 'pages/players_list_page.dart';
@@ -257,6 +259,24 @@ class _ApiErrorHandler extends StatelessWidget {
 
 class ApiErrorNotification extends Notification {}
 
+Future<void> _openPlayStoreListing(BuildContext context) async {
+  final uri = Uri.tryParse(Environment.playstoreUrl);
+  if (uri == null) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid store link')),
+      );
+    }
+    return;
+  }
+  final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+  if (!opened && context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Could not open ${uri.toString()}')),
+    );
+  }
+}
+
 class ApiErrorScreen extends StatelessWidget {
   final VoidCallback onRetry;
   const ApiErrorScreen({super.key, required this.onRetry});
@@ -287,13 +307,31 @@ class ApiErrorScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 30),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.refresh),
-                label: const Text('Retry'),
-                onPressed: onRetry,
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 320),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Retry'),
+                      onPressed: onRetry,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 15),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      icon: const Icon(Icons.system_update),
+                      label: const Text('Check app update'),
+                      onPressed: () => _openPlayStoreListing(context),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 15),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -334,13 +372,31 @@ class NoInternetScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 30),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.refresh),
-                label: const Text('Retry'),
-                onPressed: onRetry,
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 320),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Retry'),
+                      onPressed: onRetry,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 15),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      icon: const Icon(Icons.system_update),
+                      label: const Text('Check app update'),
+                      onPressed: () => _openPlayStoreListing(context),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 15),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

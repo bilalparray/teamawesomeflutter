@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:teamawesomesozeith/environment/environemnt.dart';
 import 'package:teamawesomesozeith/main.dart';
 import 'package:teamawesomesozeith/services/match_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:teamawesomesozeith/widgets/match_card.dart';
 import 'package:teamawesomesozeith/widgets/topper_widget.dart';
 import '../services/player_service.dart';
-import '../widgets/custom_app_bar.dart';
 import '../widgets/man_of_the_match_card.dart';
 import '../widgets/featured_players_list.dart';
 import '../widgets/home_skeleton_loader.dart';
@@ -31,18 +32,39 @@ class _HomePageState extends State<HomePage> {
     setState(() => isLoading = true);
     try {
       await PlayerService.fetchPlayers(forceRefresh: true);
-      await MatchService.fetchMatches(forceRefresh: true);
+      try {
+        await MatchService.fetchMatches(forceRefresh: true);
+      } catch (_) {
+        // Home can still render; recent matches section will be empty.
+        MatchService.clearMatches();
+      }
+      if (!mounted) return;
       setState(() => isLoading = false);
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         errorMessage = e.toString();
         isLoading = false;
       });
       ApiErrorNotification().dispatch(context);
-      setState(() {
-        errorMessage = e.toString();
-        isLoading = false;
-      });
+    }
+  }
+
+  Future<void> _openPlayStoreListing() async {
+    final uri = Uri.tryParse(Environment.playstoreUrl);
+    if (!mounted) return;
+    if (uri == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid store link')),
+      );
+      return;
+    }
+    final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!mounted) return;
+    if (!opened) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not open ${uri.toString()}')),
+      );
     }
   }
 
@@ -60,8 +82,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.error_outline,
-                    size: 40,
-                    color: Theme.of(context).colorScheme.error),
+                    size: 40, color: Theme.of(context).colorScheme.error),
                 const SizedBox(height: 12),
                 Text(
                   'Something went wrong',
@@ -79,10 +100,24 @@ class _HomePageState extends State<HomePage> {
                       ?.copyWith(color: Colors.grey[700]),
                 ),
                 const SizedBox(height: 16),
-                ElevatedButton.icon(
-                  onPressed: _loadData,
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('Retry'),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 320),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: _loadData,
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Retry'),
+                      ),
+                      const SizedBox(height: 12),
+                      OutlinedButton.icon(
+                        onPressed: _openPlayStoreListing,
+                        icon: const Icon(Icons.system_update),
+                        label: const Text('Check app update'),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

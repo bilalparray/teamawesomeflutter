@@ -9,6 +9,11 @@ class MatchService {
 
   static List<MatchModel> get matches => List.unmodifiable(_matches);
 
+  /// Clears cached matches (e.g. after a partial load failure).
+  static void clearMatches() {
+    _matches.clear();
+  }
+
   static Future<void> fetchMatches({bool forceRefresh = false}) async {
     if (_matches.isNotEmpty && !forceRefresh) return; // already fetched
 
