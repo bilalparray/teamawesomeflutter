@@ -1,8 +1,8 @@
 // services/player_service.dart
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:teamawesomesozeith/environment/environemnt.dart';
+import 'package:teamawesomesozeith/services/api_client.dart';
 
 class PlayerService {
   static List<dynamic> _players = [];
@@ -22,7 +22,7 @@ class PlayerService {
       return; // already fetched and no explicit refresh requested
     }
 
-    final response = await http.get(
+    final response = await ApiClient.get(
       Uri.parse('${Environment.baseUrl}/api/players'),
     );
 

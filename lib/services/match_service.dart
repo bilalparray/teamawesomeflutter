@@ -1,7 +1,7 @@
 // lib/services/match_service.dart
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:teamawesomesozeith/environment/environemnt.dart';
+import 'package:teamawesomesozeith/services/api_client.dart';
 import '../models/match_model.dart';
 
 class MatchService {
@@ -18,7 +18,7 @@ class MatchService {
     if (_matches.isNotEmpty && !forceRefresh) return; // already fetched
 
     final response =
-        await http.get(Uri.parse('${Environment.baseUrl}/api/nextmatch'));
+        await ApiClient.get(Uri.parse('${Environment.baseUrl}/api/nextmatch'));
 
     if (response.statusCode != 200) {
       throw Exception('Failed to load matches: ${response.statusCode}');

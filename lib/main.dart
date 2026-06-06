@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:teamawesomesozeith/environment/environemnt.dart';
 import 'package:teamawesomesozeith/pages/batting_order_page.dart';
+import 'package:teamawesomesozeith/pages/mate_turn_page.dart';
+import 'package:teamawesomesozeith/services/api_client.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:teamawesomesozeith/pages/stats_leaderboard.dart';
 import 'pages/home_page.dart';
@@ -66,8 +69,7 @@ class CricketTeamApp extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            padding:
-                const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           ),
         ),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -79,7 +81,7 @@ class CricketTeamApp extends StatelessWidget {
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: colorScheme.surfaceVariant,
+          fillColor: colorScheme.surfaceContainerHighest,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
@@ -102,39 +104,137 @@ class ConnectivityWrapper extends StatefulWidget {
   State<ConnectivityWrapper> createState() => _ConnectivityWrapperState();
 }
 
+enum _GateState { initializing, online, offline }
+
 class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
-  List<ConnectivityResult> _connectionStatus = [ConnectivityResult.none];
+  static const _offlineDebounce = Duration(seconds: 2);
+
+  _GateState _gateState = _GateState.initializing;
   final Connectivity _connectivity = Connectivity();
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySub;
+  Timer? _offlineDebounceTimer;
 
   @override
   void initState() {
     super.initState();
-    _checkConnectivity();
-    _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+    _connectivitySub =
+        _connectivity.onConnectivityChanged.listen(_onConnectivityChanged);
+    _runFullCheck();
   }
 
-  Future<void> _checkConnectivity() async {
+  @override
+  void dispose() {
+    _offlineDebounceTimer?.cancel();
+    _connectivitySub?.cancel();
+    super.dispose();
+  }
+
+  bool _hasNetworkLink(List<ConnectivityResult> results) {
+    return results.isNotEmpty && !results.contains(ConnectivityResult.none);
+  }
+
+  Future<bool> _pingApi() async {
     try {
-      final result = await _connectivity.checkConnectivity();
-      _updateConnectionStatus(result);
+      await ApiClient.get(Uri.parse('${Environment.baseUrl}/api/updateapp'));
+      return true;
     } catch (e) {
-      _updateConnectionStatus([ConnectivityResult.none]);
+      return !ApiClient.isNetworkError(e);
     }
   }
 
-  void _updateConnectionStatus(List<ConnectivityResult> results) {
-    setState(() => _connectionStatus = results);
+  void _scheduleOffline() {
+    _offlineDebounceTimer?.cancel();
+    _offlineDebounceTimer = Timer(_offlineDebounce, () {
+      if (mounted) setState(() => _gateState = _GateState.offline);
+    });
   }
 
-  bool get isConnected =>
-      !_connectionStatus.contains(ConnectivityResult.none) &&
-      _connectionStatus.isNotEmpty;
+  Future<void> _runFullCheck() async {
+    _offlineDebounceTimer?.cancel();
+    setState(() => _gateState = _GateState.initializing);
+
+    try {
+      final results = await _connectivity.checkConnectivity();
+
+      if (!_hasNetworkLink(results)) {
+        if (!mounted) return;
+        setState(() => _gateState = _GateState.offline);
+        return;
+      }
+
+      final apiReachable = await _pingApi();
+      if (!mounted) return;
+
+      setState(() => _gateState =
+          apiReachable ? _GateState.online : _GateState.offline);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _gateState = _GateState.offline);
+    }
+  }
+
+  void _onConnectivityChanged(List<ConnectivityResult> results) {
+    if (!_hasNetworkLink(results)) {
+      if (_gateState == _GateState.online) {
+        _scheduleOffline();
+      } else {
+        _offlineDebounceTimer?.cancel();
+        if (mounted) setState(() => _gateState = _GateState.offline);
+      }
+      return;
+    }
+
+    _offlineDebounceTimer?.cancel();
+    _runFullCheck();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return isConnected
-        ? const MainPage()
-        : NoInternetScreen(onRetry: _checkConnectivity);
+    switch (_gateState) {
+      case _GateState.initializing:
+        return const CheckingConnectionScreen();
+      case _GateState.online:
+        return const MainPage();
+      case _GateState.offline:
+        return NoInternetScreen(onRetry: _runFullCheck);
+    }
+  }
+}
+
+class CheckingConnectionScreen extends StatelessWidget {
+  const CheckingConnectionScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(color: colorScheme.primary),
+              const SizedBox(height: 20),
+              Text(
+                'Checking connection…',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[800],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Verifying network and server',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -156,6 +256,7 @@ class _MainPageState extends State<MainPage> {
       ApiWrapper(child: const HomePage()),
       const PlayersPage(),
       const BattingOrderPage(),
+      const MateTurnPage(),
       const StatsLeaderboardPage(),
       const SettingsPage(),
     ];
@@ -194,6 +295,8 @@ class _MainPageState extends State<MainPage> {
             BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Players'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.sports_cricket), label: 'Batting Order'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.local_cafe), label: 'Mate'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.leaderboard), label: 'Stats'),
             BottomNavigationBarItem(

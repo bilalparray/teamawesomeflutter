@@ -5,7 +5,7 @@ import '../services/batting_order_service.dart';
 import '../services/player_service.dart';
 
 class BattingOrderPage extends StatefulWidget {
-  const BattingOrderPage({Key? key}) : super(key: key);
+  const BattingOrderPage({super.key});
 
   @override
   State<BattingOrderPage> createState() => _BattingOrderPageState();

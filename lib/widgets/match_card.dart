@@ -5,7 +5,7 @@ import '../models/match_model.dart';
 class MatchCard extends StatelessWidget {
   final MatchModel match;
 
-  const MatchCard({Key? key, required this.match}) : super(key: key);
+  const MatchCard({super.key, required this.match});
 
   Color _statusColor(BuildContext context) {
     final s = match.status.toLowerCase();

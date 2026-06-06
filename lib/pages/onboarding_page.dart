@@ -195,7 +195,7 @@ class _OnboardingPageState extends State<OnboardingPage>
               bottom: 150 + 20 * math.sin(_backgroundAnimation.value * 0.8),
               child: Opacity(
                 opacity: 0.08,
-                child: Container(
+                child: SizedBox(
                   width: 120,
                   height: 200,
                   child: Row(

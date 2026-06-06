@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:teamawesomesozeith/environment/environemnt.dart';
+import 'package:teamawesomesozeith/services/api_client.dart';
 
 class BattingOrderService {
   static Future<List<String>> fetchBattingOrder() async {
     final response =
-        await http.get(Uri.parse('${Environment.baseUrl}/api/batting-order'));
+        await ApiClient.get(Uri.parse('${Environment.baseUrl}/api/batting-order'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);

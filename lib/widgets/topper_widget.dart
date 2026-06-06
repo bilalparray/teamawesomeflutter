@@ -7,12 +7,12 @@ class TopperCard extends StatelessWidget {
   final int? wicket;
 
   const TopperCard({
-    Key? key,
+    super.key,
     required this.imagePath,
     required this.playerName,
     this.runsScored,
     this.wicket,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

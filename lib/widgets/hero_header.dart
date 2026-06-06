@@ -6,11 +6,11 @@ class HeroHeader extends StatelessWidget {
   final IconData icon;
 
   const HeroHeader({
-    Key? key,
+    super.key,
     required this.teamName,
     required this.description,
     this.icon = Icons.sports_cricket,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

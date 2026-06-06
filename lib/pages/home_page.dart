@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teamawesomesozeith/environment/environemnt.dart';
 import 'package:teamawesomesozeith/main.dart';
 import 'package:teamawesomesozeith/services/match_service.dart';
+import 'package:teamawesomesozeith/services/mate_turn_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:teamawesomesozeith/widgets/match_card.dart';
 import 'package:teamawesomesozeith/widgets/topper_widget.dart';
@@ -11,6 +12,7 @@ import '../widgets/featured_players_list.dart';
 import '../widgets/home_skeleton_loader.dart';
 import '../widgets/management_card_widget.dart'; // Import your ManagementCardWidget
 import '../widgets/section_card.dart';
+import '../widgets/upcoming_mate_turn_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,6 +24,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool isLoading = true;
   String errorMessage = '';
+  UpcomingMateTurn? upcomingMateTurn;
   @override
   void initState() {
     super.initState();
@@ -37,6 +40,13 @@ class _HomePageState extends State<HomePage> {
       } catch (_) {
         // Home can still render; recent matches section will be empty.
         MatchService.clearMatches();
+      }
+      try {
+        await MateTurnService.fetchAll(forceRefresh: true);
+        upcomingMateTurn = MateTurnService.getUpcoming();
+      } catch (_) {
+        MateTurnService.clearCache();
+        upcomingMateTurn = null;
       }
       if (!mounted) return;
       setState(() => isLoading = false);
@@ -145,6 +155,10 @@ class _HomePageState extends State<HomePage> {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 80),
       children: [
+        if (upcomingMateTurn != null) ...[
+          HomeUpcomingMateTurnSection(upcoming: upcomingMateTurn!),
+          const SizedBox(height: 12),
+        ],
         SectionCard(
           leading: CircleAvatar(
             radius: 20,

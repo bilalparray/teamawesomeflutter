@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:teamawesomesozeith/environment/environemnt.dart';
 import 'package:teamawesomesozeith/models/player_stat.dart';
+import 'package:teamawesomesozeith/services/api_client.dart';
 
 /// StatsLeaderboardPage
 /// - Calls POST /api/stats/top
@@ -12,7 +12,7 @@ import 'package:teamawesomesozeith/models/player_stat.dart';
 /// - Images are treated as URLs (not base64)
 
 class StatsLeaderboardPage extends StatefulWidget {
-  const StatsLeaderboardPage({Key? key}) : super(key: key);
+  const StatsLeaderboardPage({super.key});
 
   @override
   State<StatsLeaderboardPage> createState() => _StatsLeaderboardPageState();
@@ -45,7 +45,7 @@ class _StatsLeaderboardPageState extends State<StatsLeaderboardPage> {
     };
 
     try {
-      final resp = await http.post(url,
+      final resp = await ApiClient.post(url,
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode(body));
 
@@ -83,11 +83,11 @@ class _StatsLeaderboardPageState extends State<StatsLeaderboardPage> {
     final isNarrow = maxWidth < narrowThreshold;
 
     final metricField = DropdownButtonFormField<String>(
-      value: selectedMetric,
+      initialValue: selectedMetric,
       decoration: InputDecoration(
         labelText: 'Metric',
         filled: true,
-        fillColor: Theme.of(context).colorScheme.surfaceVariant,
+        fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
@@ -102,11 +102,11 @@ class _StatsLeaderboardPageState extends State<StatsLeaderboardPage> {
     );
 
     final scopeField = DropdownButtonFormField<String>(
-      value: selectedScope,
+      initialValue: selectedScope,
       decoration: InputDecoration(
         labelText: 'Scope',
         filled: true,
-        fillColor: Theme.of(context).colorScheme.surfaceVariant,
+        fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
@@ -270,9 +270,10 @@ class _StatsLeaderboardPageState extends State<StatsLeaderboardPage> {
                         const SizedBox(height: 4),
                         Text(
                           p.role ?? '',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Colors.grey[700],
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Colors.grey[700],
+                                  ),
                         ),
                       ],
                     ),
