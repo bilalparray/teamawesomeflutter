@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:teamawesomesozeith/environment/environemnt.dart';
+import 'package:teamawesomesozeith/pages/admin/admin_hub_page.dart';
+import 'package:teamawesomesozeith/pages/admin/admin_login_page.dart';
+import 'package:teamawesomesozeith/services/admin/admin_auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -95,6 +98,38 @@ class _SettingsPageState extends State<SettingsPage> {
               ],
             ),
           ),
+          const Divider(height: 32, thickness: 1),
+
+          // Admin Section
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              'Team management',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: theme.textTheme.titleLarge?.color,
+              ),
+            ),
+          ),
+          _buildSettingTile(
+            context,
+            icon: Icons.admin_panel_settings_outlined,
+            title: 'Team Admin',
+            subtitle: 'Mate turn & scorecard processor',
+            onTap: () async {
+              final loggedIn = await AdminAuthService.isLoggedIn();
+              if (!context.mounted) return;
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => loggedIn
+                      ? const AdminHubPage()
+                      : const AdminLoginPage(),
+                ),
+              );
+            },
+          ),
+
           const Divider(height: 32, thickness: 1),
 
           // App Section
