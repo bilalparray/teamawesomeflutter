@@ -284,7 +284,10 @@ class _MainPageState extends State<MainPage> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        body: _pages[_selectedIndex],
+        body: IndexedStack(
+          index: _selectedIndex,
+          children: _pages,
+        ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
           selectedItemColor: Colors.green[800],

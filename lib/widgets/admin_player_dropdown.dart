@@ -17,11 +17,11 @@ class AdminPlayerDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sorted = List<Map<String, dynamic>>.from(players)
-      ..sort((a, b) => (a['name']?.toString() ?? '')
-          .compareTo(b['name']?.toString() ?? ''));
+      ..sort((a, b) =>
+          (a['name']?.toString() ?? '').compareTo(b['name']?.toString() ?? ''));
 
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),

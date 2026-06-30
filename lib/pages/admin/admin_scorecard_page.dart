@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -40,8 +39,7 @@ class _AdminScorecardPageState extends State<AdminScorecardPage> {
 
   void _setEditableRows(List<Map<String, dynamic>> output) {
     _disposeEditableRows();
-    _editableRows =
-        output.map((e) => EditableScorecardRow.fromMap(e)).toList();
+    _editableRows = output.map((e) => EditableScorecardRow.fromMap(e)).toList();
   }
 
   Future<void> _pickPdf() async {
@@ -178,7 +176,8 @@ class _AdminScorecardPageState extends State<AdminScorecardPage> {
           _status =
               'Processed ${output.length} players — no stats read from PDF; edit manually or redeploy backend (parser v7+)';
         } else {
-          _status = 'Processed ${output.length} players ($withStats with stats)';
+          _status =
+              'Processed ${output.length} players ($withStats with stats)';
         }
       });
     } catch (e) {
@@ -195,8 +194,7 @@ class _AdminScorecardPageState extends State<AdminScorecardPage> {
       return;
     }
 
-    final payload =
-        _editableRows.map((row) => row.toApiPayload()).toList();
+    final payload = _editableRows.map((row) => row.toApiPayload()).toList();
 
     final confirm = await showDialog<bool>(
       context: context,
@@ -289,7 +287,8 @@ class _AdminScorecardPageState extends State<AdminScorecardPage> {
                       ),
                       const SizedBox(height: 12),
                       ElevatedButton.icon(
-                        onPressed: _busy || _pdfBytes == null ? null : _extractPlayers,
+                        onPressed:
+                            _busy || _pdfBytes == null ? null : _extractPlayers,
                         icon: const Icon(Icons.person_search),
                         label: const Text('Extract Players'),
                       ),

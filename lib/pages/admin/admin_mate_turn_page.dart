@@ -109,7 +109,7 @@ class _AdminMateTurnPageState extends State<AdminMateTurnPage>
     return p?['name']?.toString() ?? '';
   }
 
-  List<Map<String, dynamic>> _playersForDropdown({int? excludeGroup6Solo}) {
+  List<Map<String, dynamic>> _playersForDropdown() {
     return _players.cast<Map<String, dynamic>>();
   }
 
@@ -144,7 +144,8 @@ class _AdminMateTurnPageState extends State<AdminMateTurnPage>
 
     final group = _groups.firstWhere(
       (g) => g.groupNumber == gn,
-      orElse: () => MateGroupEntry(groupNumber: gn, playerIds: [], playerNames: []),
+      orElse: () =>
+          MateGroupEntry(groupNumber: gn, playerIds: [], playerNames: []),
     );
     final ids = group.playerIds.map((e) => e.toString()).toList();
 
@@ -172,7 +173,8 @@ class _AdminMateTurnPageState extends State<AdminMateTurnPage>
   List<Map<String, dynamic>> _playersInGroup(int gn) {
     final group = _groups.firstWhere(
       (g) => g.groupNumber == gn,
-      orElse: () => MateGroupEntry(groupNumber: gn, playerIds: [], playerNames: []),
+      orElse: () =>
+          MateGroupEntry(groupNumber: gn, playerIds: [], playerNames: []),
     );
     final allowed = group.playerIds.map((e) => e.toString()).toSet();
     return _players.cast<Map<String, dynamic>>().where((p) {
@@ -271,8 +273,12 @@ class _AdminMateTurnPageState extends State<AdminMateTurnPage>
       builder: (ctx) => AlertDialog(
         title: const Text('Delete mate turn?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Delete')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('Delete')),
         ],
       ),
     );
@@ -378,7 +384,7 @@ class _AdminMateTurnPageState extends State<AdminMateTurnPage>
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8),
                       child: DropdownButtonFormField<String>(
-                        value: _groupSelections[n]?[slot],
+                        initialValue: _groupSelections[n]?[slot],
                         decoration: InputDecoration(
                           labelText: 'Player ${slot + 1}',
                           isDense: true,
@@ -403,7 +409,8 @@ class _AdminMateTurnPageState extends State<AdminMateTurnPage>
             ),
           ),
         ],
-        ElevatedButton(onPressed: _saveGroups, child: const Text('Save Groups')),
+        ElevatedButton(
+            onPressed: _saveGroups, child: const Text('Save Groups')),
       ],
     );
   }
@@ -435,7 +442,7 @@ class _AdminMateTurnPageState extends State<AdminMateTurnPage>
           onTap: _pickDate,
         ),
         DropdownButtonFormField<int>(
-          value: gn,
+          initialValue: gn,
           decoration: const InputDecoration(labelText: 'Group'),
           items: List.generate(6, (i) {
             final n = i + 1;
@@ -449,7 +456,7 @@ class _AdminMateTurnPageState extends State<AdminMateTurnPage>
         const SizedBox(height: 12),
         if (gn != null && gn == 6) ...[
           DropdownButtonFormField<String>(
-            value: _player1Id,
+            initialValue: _player1Id,
             decoration: const InputDecoration(labelText: 'Solo player'),
             items: _playersInGroup(6).map((p) {
               final id = p['_id']?.toString() ?? '';
@@ -462,7 +469,7 @@ class _AdminMateTurnPageState extends State<AdminMateTurnPage>
           ),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
-            value: _player2Id,
+            initialValue: _player2Id,
             decoration: const InputDecoration(labelText: 'Helper (Groups 1–5)'),
             items: _helperCandidates().map((p) {
               final id = p['_id']?.toString() ?? '';
@@ -476,7 +483,7 @@ class _AdminMateTurnPageState extends State<AdminMateTurnPage>
           ),
         ] else if (gn != null) ...[
           DropdownButtonFormField<String>(
-            value: _player1Id,
+            initialValue: _player1Id,
             decoration: const InputDecoration(labelText: 'Player 1'),
             items: _playersInGroup(gn).map((p) {
               final id = p['_id']?.toString() ?? '';
@@ -489,7 +496,7 @@ class _AdminMateTurnPageState extends State<AdminMateTurnPage>
           ),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
-            value: _player2Id,
+            initialValue: _player2Id,
             decoration: const InputDecoration(labelText: 'Player 2'),
             items: _playersInGroup(gn).map((p) {
               final id = p['_id']?.toString() ?? '';
@@ -511,10 +518,12 @@ class _AdminMateTurnPageState extends State<AdminMateTurnPage>
         const SizedBox(height: 16),
         ElevatedButton(
           onPressed: _saveTurn,
-          child: Text(_editingTurnId != null ? 'Update Mate Turn' : 'Save Mate Turn'),
+          child: Text(
+              _editingTurnId != null ? 'Update Mate Turn' : 'Save Mate Turn'),
         ),
         if (_editingTurnId != null)
-          TextButton(onPressed: _resetTurnForm, child: const Text('Cancel edit')),
+          TextButton(
+              onPressed: _resetTurnForm, child: const Text('Cancel edit')),
       ],
     );
   }
@@ -532,7 +541,8 @@ class _AdminMateTurnPageState extends State<AdminMateTurnPage>
         return Card(
           child: ListTile(
             title: Text(turn.formattedDate()),
-            subtitle: Text('${turn.playersLabel}${turn.notes.isNotEmpty ? '\n${turn.notes}' : ''}'),
+            subtitle: Text(
+                '${turn.playersLabel}${turn.notes.isNotEmpty ? '\n${turn.notes}' : ''}'),
             isThreeLine: turn.notes.isNotEmpty,
             trailing: PopupMenuButton<String>(
               onSelected: (v) {

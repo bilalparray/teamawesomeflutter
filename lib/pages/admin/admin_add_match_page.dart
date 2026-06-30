@@ -172,7 +172,9 @@ class _AdminAddMatchPageState extends State<AdminAddMatchPage> {
         title: const Text('Delete match?'),
         content: Text('Remove match vs ${m.opponent}?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -226,8 +228,11 @@ class _AdminAddMatchPageState extends State<AdminAddMatchPage> {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 Text(
-                                  _editingId == null ? 'Add match' : 'Edit match',
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  _editingId == null
+                                      ? 'Add match'
+                                      : 'Edit match',
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
                                 const SizedBox(height: 12),
                                 TextField(
@@ -239,16 +244,20 @@ class _AdminAddMatchPageState extends State<AdminAddMatchPage> {
                                 ),
                                 const SizedBox(height: 12),
                                 DropdownButtonFormField<bool>(
-                                  value: _isSeries,
+                                  initialValue: _isSeries,
                                   decoration: const InputDecoration(
                                     labelText: 'Match type',
                                     border: OutlineInputBorder(),
                                   ),
                                   items: const [
-                                    DropdownMenuItem(value: false, child: Text('Individual')),
-                                    DropdownMenuItem(value: true, child: Text('Series')),
+                                    DropdownMenuItem(
+                                        value: false,
+                                        child: Text('Individual')),
+                                    DropdownMenuItem(
+                                        value: true, child: Text('Series')),
                                   ],
-                                  onChanged: (v) => setState(() => _isSeries = v ?? false),
+                                  onChanged: (v) =>
+                                      setState(() => _isSeries = v ?? false),
                                 ),
                                 const SizedBox(height: 12),
                                 OutlinedButton.icon(
@@ -340,19 +349,25 @@ class _AdminAddMatchPageState extends State<AdminAddMatchPage> {
                                   contentPadding: EdgeInsets.zero,
                                   title: const Text('Home match'),
                                   value: _isHomeMatch,
-                                  onChanged: (v) => setState(() => _isHomeMatch = v),
+                                  onChanged: (v) =>
+                                      setState(() => _isHomeMatch = v),
                                 ),
                                 DropdownButtonFormField<String>(
-                                  value: _status,
+                                  initialValue: _status,
                                   decoration: const InputDecoration(
                                     labelText: 'Status',
                                     border: OutlineInputBorder(),
                                   ),
                                   items: const [
-                                    DropdownMenuItem(value: 'upcoming', child: Text('Upcoming')),
-                                    DropdownMenuItem(value: 'completed', child: Text('Completed')),
+                                    DropdownMenuItem(
+                                        value: 'upcoming',
+                                        child: Text('Upcoming')),
+                                    DropdownMenuItem(
+                                        value: 'completed',
+                                        child: Text('Completed')),
                                   ],
-                                  onChanged: (v) => setState(() => _status = v ?? 'upcoming'),
+                                  onChanged: (v) =>
+                                      setState(() => _status = v ?? 'upcoming'),
                                 ),
                                 const SizedBox(height: 16),
                                 Row(
@@ -361,7 +376,9 @@ class _AdminAddMatchPageState extends State<AdminAddMatchPage> {
                                       child: ElevatedButton.icon(
                                         onPressed: _busy ? null : _save,
                                         icon: const Icon(Icons.save),
-                                        label: Text(_editingId == null ? 'Save' : 'Update'),
+                                        label: Text(_editingId == null
+                                            ? 'Save'
+                                            : 'Update'),
                                       ),
                                     ),
                                     if (_editingId != null) ...[
@@ -378,7 +395,8 @@ class _AdminAddMatchPageState extends State<AdminAddMatchPage> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        Text('Matches', style: Theme.of(context).textTheme.titleMedium),
+                        Text('Matches',
+                            style: Theme.of(context).textTheme.titleMedium),
                         const SizedBox(height: 8),
                         if (_matches.isEmpty)
                           const Text('No matches yet.')
@@ -396,8 +414,11 @@ class _AdminAddMatchPageState extends State<AdminAddMatchPage> {
                                       if (action == 'delete') _delete(m);
                                     },
                                     itemBuilder: (_) => const [
-                                      PopupMenuItem(value: 'edit', child: Text('Edit')),
-                                      PopupMenuItem(value: 'delete', child: Text('Delete')),
+                                      PopupMenuItem(
+                                          value: 'edit', child: Text('Edit')),
+                                      PopupMenuItem(
+                                          value: 'delete',
+                                          child: Text('Delete')),
                                     ],
                                   ),
                                 ),

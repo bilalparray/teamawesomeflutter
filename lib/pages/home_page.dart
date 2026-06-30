@@ -25,24 +25,35 @@ class _HomePageState extends State<HomePage> {
   bool isLoading = true;
   String errorMessage = '';
   UpcomingMateTurn? upcomingMateTurn;
+
+  bool get _hasCachedData => PlayerService.players.isNotEmpty;
+
   @override
   void initState() {
     super.initState();
-    _loadData();
+    if (_hasCachedData) {
+      upcomingMateTurn = MateTurnService.getUpcoming();
+      isLoading = false;
+    } else {
+      _loadData(forceRefresh: true);
+    }
   }
 
-  Future<void> _loadData() async {
-    setState(() => isLoading = true);
+  Future<void> _loadData({bool forceRefresh = false}) async {
+    final showLoading = forceRefresh || !_hasCachedData;
+    if (showLoading) {
+      setState(() => isLoading = true);
+    }
     try {
-      await PlayerService.fetchPlayers(forceRefresh: true);
+      await PlayerService.fetchPlayers(forceRefresh: forceRefresh);
       try {
-        await MatchService.fetchMatches(forceRefresh: true);
+        await MatchService.fetchMatches(forceRefresh: forceRefresh);
       } catch (_) {
         // Home can still render; recent matches section will be empty.
         MatchService.clearMatches();
       }
       try {
-        await MateTurnService.fetchAll(forceRefresh: true);
+        await MateTurnService.fetchAll(forceRefresh: forceRefresh);
         upcomingMateTurn = MateTurnService.getUpcoming();
       } catch (_) {
         MateTurnService.clearCache();
@@ -116,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       ElevatedButton.icon(
-                        onPressed: _loadData,
+                        onPressed: () => _loadData(forceRefresh: true),
                         icon: const Icon(Icons.refresh),
                         label: const Text('Retry'),
                       ),
@@ -143,7 +154,7 @@ class _HomePageState extends State<HomePage> {
       body: isLoading
           ? const HomeSkeletonLoader()
           : RefreshIndicator(
-              onRefresh: _loadData,
+              onRefresh: () => _loadData(forceRefresh: true),
               child: _buildPlayerContent(),
             ),
     );
