@@ -5,6 +5,7 @@ import 'package:teamawesomesozeith/environment/environemnt.dart';
 import 'package:teamawesomesozeith/pages/admin/admin_hub_page.dart';
 import 'package:teamawesomesozeith/pages/admin/admin_login_page.dart';
 import 'package:teamawesomesozeith/services/admin/admin_auth_service.dart';
+import 'package:teamawesomesozeith/pages/team_rules_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -98,6 +99,32 @@ class _SettingsPageState extends State<SettingsPage> {
               ],
             ),
           ),
+          const Divider(height: 32, thickness: 1),
+
+          // Team rules (all users)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              'Team',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: theme.textTheme.titleLarge?.color,
+              ),
+            ),
+          ),
+          _buildSettingTile(
+            context,
+            icon: Icons.gavel_outlined,
+            title: 'Team Rules',
+            subtitle: 'Guidelines all players should follow',
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const TeamRulesPage()),
+              );
+            },
+          ),
+
           const Divider(height: 32, thickness: 1),
 
           // Admin Section

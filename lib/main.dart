@@ -8,7 +8,10 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:teamawesomesozeith/environment/environemnt.dart';
 import 'package:teamawesomesozeith/pages/batting_order_page.dart';
 import 'package:teamawesomesozeith/pages/mate_turn_page.dart';
-import 'package:teamawesomesozeith/services/api_client.dart';
+import 'package:teamawesomesozeith/services/app_startup_service.dart';
+import 'package:teamawesomesozeith/widgets/app_splash_screen.dart';
+import 'package:teamawesomesozeith/widgets/force_update_screen.dart';
+import 'package:teamawesomesozeith/widgets/maintenance_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:teamawesomesozeith/pages/stats_leaderboard.dart';
 import 'pages/home_page.dart';
@@ -104,12 +107,17 @@ class ConnectivityWrapper extends StatefulWidget {
   State<ConnectivityWrapper> createState() => _ConnectivityWrapperState();
 }
 
-enum _GateState { initializing, online, offline }
+enum _GateState { initializing, online, offline, forceUpdate, maintenance }
 
 class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
   static const _offlineDebounce = Duration(seconds: 2);
+  static const _minSplashDisplay = Duration(milliseconds: 1200);
 
   _GateState _gateState = _GateState.initializing;
+  double _splashProgress = 0;
+  String _splashLabel = 'Loading…';
+  String _currentVersion = '';
+  String _requiredVersion = '';
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<List<ConnectivityResult>>? _connectivitySub;
   Timer? _offlineDebounceTimer;
@@ -133,15 +141,6 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
     return results.isNotEmpty && !results.contains(ConnectivityResult.none);
   }
 
-  Future<bool> _pingApi() async {
-    try {
-      await ApiClient.get(Uri.parse('${Environment.baseUrl}/api/updateapp'));
-      return true;
-    } catch (e) {
-      return !ApiClient.isNetworkError(e);
-    }
-  }
-
   void _scheduleOffline() {
     _offlineDebounceTimer?.cancel();
     _offlineDebounceTimer = Timer(_offlineDebounce, () {
@@ -151,26 +150,43 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
 
   Future<void> _runFullCheck() async {
     _offlineDebounceTimer?.cancel();
-    setState(() => _gateState = _GateState.initializing);
+    setState(() {
+      _gateState = _GateState.initializing;
+      _splashProgress = 0;
+      _splashLabel = 'Loading…';
+    });
 
-    try {
-      final results = await _connectivity.checkConnectivity();
-
-      if (!_hasNetworkLink(results)) {
+    final minDisplay = Future<void>.delayed(_minSplashDisplay);
+    final bootstrap = AppStartupService.bootstrap(
+      onProgress: (progress, label) {
         if (!mounted) return;
-        setState(() => _gateState = _GateState.offline);
-        return;
-      }
+        setState(() {
+          _splashProgress = progress;
+          _splashLabel = label;
+        });
+      },
+    );
 
-      final apiReachable = await _pingApi();
-      if (!mounted) return;
-
-      setState(() => _gateState =
-          apiReachable ? _GateState.online : _GateState.offline);
+    StartupOutcome outcome;
+    try {
+      outcome = await bootstrap;
     } catch (_) {
-      if (!mounted) return;
-      setState(() => _gateState = _GateState.offline);
+      outcome = const StartupOutcome(result: StartupResult.offline);
     }
+
+    await minDisplay;
+    if (!mounted) return;
+
+    setState(() {
+      _currentVersion = outcome.currentVersion ?? '';
+      _requiredVersion = outcome.requiredVersion ?? '';
+      _gateState = switch (outcome.result) {
+        StartupResult.offline => _GateState.offline,
+        StartupResult.forceUpdate => _GateState.forceUpdate,
+        StartupResult.maintenance => _GateState.maintenance,
+        StartupResult.success => _GateState.online,
+      };
+    });
   }
 
   void _onConnectivityChanged(List<ConnectivityResult> results) {
@@ -192,49 +208,22 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
   Widget build(BuildContext context) {
     switch (_gateState) {
       case _GateState.initializing:
-        return const CheckingConnectionScreen();
+        return AppSplashScreen(
+          progress: _splashProgress,
+          statusLabel: _splashLabel,
+        );
       case _GateState.online:
         return const MainPage();
       case _GateState.offline:
         return NoInternetScreen(onRetry: _runFullCheck);
+      case _GateState.forceUpdate:
+        return ForceUpdateScreen(
+          currentVersion: _currentVersion,
+          requiredVersion: _requiredVersion,
+        );
+      case _GateState.maintenance:
+        return MaintenanceScreen(onRetry: _runFullCheck);
     }
-  }
-}
-
-class CheckingConnectionScreen extends StatelessWidget {
-  const CheckingConnectionScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(color: colorScheme.primary),
-              const SizedBox(height: 20),
-              Text(
-                'Checking connection…',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey[800],
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Verifying network and server',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }
 

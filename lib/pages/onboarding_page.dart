@@ -137,7 +137,7 @@ class _OnboardingPageState extends State<OnboardingPage>
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => const MainPage()),
+      MaterialPageRoute(builder: (_) => const ConnectivityWrapper()),
     );
   }
 
